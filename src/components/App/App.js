@@ -16,7 +16,7 @@ function App() {
   // const resObj = { fff: "fafa" };
   let layerName = "";
   const saveChanges = event => {
-    if (event.target.dataset.name == "btnSend") return;
+    if (event.target.dataset.name === "btnSend") return;
     if (event.target.dataset.name === "layerSel") {
       // obj.name = idList[event.target.value].text;
       layerName = idList[event.target.value].text;

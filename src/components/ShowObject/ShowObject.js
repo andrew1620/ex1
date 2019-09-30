@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 export default function ShowObject({ resObj }) {
   const divStyle = {
@@ -8,11 +8,11 @@ export default function ShowObject({ resObj }) {
     boxSizing: "border-box",
     height: "300px"
   };
-  const [arr, setArr] = useState(["caca"]);
-  // const arr = [];
+  // const [arr, setArr] = useState([]);
+  const arr = [];
   for (let prop in resObj) {
-    setArr([...arr, `${resObj[prop]}: ${prop},`]);
-    // arr.push(`${resObj[prop]}: ${prop},`);
+    // setArr([...arr, `${resObj[prop]}: ${prop},`]);
+    arr.push(`${resObj[prop]}: ${prop},`);
   }
   return <div style={divStyle}>{arr}</div>;
 }
