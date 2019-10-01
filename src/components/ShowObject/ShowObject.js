@@ -1,20 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function ShowObject({ resObj }) {
   const divStyle = {
-    border: "3px solid red",
-    margin: "0 5px",
+    border: "3px solid #eee",
+    borderRadius: "15px",
+    margin: "0 0px",
     padding: "10px",
     boxSizing: "border-box",
-    height: "300px"
+    wordWrap: "break-word",
+    width: "350px"
   };
-  // const [arr, setArr] = useState([]);
-  const arr = [];
-  for (let prop in resObj) {
-    // setArr([...arr, `${resObj[prop]}: ${prop},`]);
-    arr.push(`${resObj[prop]}: ${prop},`);
-  }
-  return <div style={divStyle}>{arr}</div>;
+  const [arr, setArr] = useState([]);
+  // const arr = [];
+  let strStyle = "";
+  const showObj = () => {
+    for (let prop in resObj) {
+      for (let key in resObj[prop].style) {
+        strStyle += ` ${key}: ${resObj[prop].style[key]}, `;
+      }
+      setArr([
+        ...arr,
+        <p key={resObj[prop].id}>
+          {`${prop} - id: ${resObj[prop].id}, style: {${strStyle}} `}
+        </p>
+      ]);
+      strStyle = "";
+      // arr.push(`${resObj[prop]}: ${prop},`);
+    }
+  };
+  return (
+    <div style={divStyle}>
+      <button className="btn btn-primary" onClick={showObj}>
+        refresh
+      </button>
+      {arr}
+    </div>
+  );
 }
 
 // class ShowObject extends React.Component {

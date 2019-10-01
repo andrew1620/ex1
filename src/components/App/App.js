@@ -11,22 +11,43 @@ function App() {
     { id: 4, text: "layer 4" }
   ]);
 
-  let [resObj, setResObj] = useState({});
-  const obj = {};
-  // const resObj = { fff: "fafa" };
+  const [resObj, setResObj] = useState({});
+  const obj = {
+    [idList[0].text]: {
+      id: idList[0].id,
+      style: {
+        color: "#3388ff",
+        stroke: "true",
+        weight: "3",
+        opacity: "1.0",
+        lineCap: "round",
+        lineJoin: "round",
+        dashArray: "null",
+        DashOffset: "null",
+        fill: "true",
+        fillColor: "#3388ff",
+        fillOpacity: "0.2",
+        fillRule: "evenodd",
+        bubblingMluseEvents: "true",
+        renderer: "renderer",
+        className: "null"
+      }
+    }
+  };
   let layerName = "";
   const saveChanges = event => {
     if (event.target.dataset.name === "btnSend") return;
     if (event.target.dataset.name === "layerSel") {
-      // obj.name = idList[event.target.value].text;
       layerName = idList[event.target.value].text;
+
       obj[layerName] = {
         id: idList[event.target.value].id,
         style: {}
       };
       return;
     }
-    // obj[event.target.id] = event.target.value;
+    if (layerName === "") layerName = idList[0].text;
+
     obj[layerName].style[event.target.id] = event.target.value;
     setResObj(Object.assign(resObj, obj));
     console.log("%%%", resObj);
@@ -37,7 +58,12 @@ function App() {
   };
   return (
     <div
-      style={{ border: "1px solid red", margin: "10px 10px", display: "flex" }}
+      style={{
+        margin: "10px auto",
+        display: "flex",
+        justifyContent: "center",
+        width: "70%"
+      }}
     >
       <SetForm idList={idList} saveChanges={saveChanges} show={show} />
       <ShowObject resObj={resObj} />

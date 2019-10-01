@@ -7,7 +7,7 @@ export default function SetForm({ idList, saveChanges, show }) {
     padding: "5px 10px",
     boxSizing: "border-box",
     borderRadius: "15px",
-    width: "45%",
+    width: "700px",
     margin: "0"
   };
   return (
