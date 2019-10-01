@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function ShowObject({ resObj }) {
+export default function ShowObject({ resObj, showObj, arr }) {
   const divStyle = {
     border: "3px solid #eee",
     borderRadius: "15px",
@@ -10,24 +10,24 @@ export default function ShowObject({ resObj }) {
     wordWrap: "break-word",
     width: "350px"
   };
-  const [arr, setArr] = useState([]);
-  // const arr = [];
-  let strStyle = "";
-  const showObj = () => {
-    for (let prop in resObj) {
-      for (let key in resObj[prop].style) {
-        strStyle += ` ${key}: ${resObj[prop].style[key]}, `;
-      }
-      setArr([
-        ...arr,
-        <p key={resObj[prop].id}>
-          {`${prop} - id: ${resObj[prop].id}, style: {${strStyle}} `}
-        </p>
-      ]);
-      strStyle = "";
-      // arr.push(`${resObj[prop]}: ${prop},`);
-    }
-  };
+  // const [arr, setArr] = useState([]);
+  // // const arr = [];
+  // let strStyle = "";
+  // const showObj = () => {
+  //   for (let prop in resObj) {
+  //     for (let key in resObj[prop].style) {
+  //       strStyle += ` ${key}: ${resObj[prop].style[key]}, `;
+  //     }
+  //     setArr([
+  //       ...arr,
+  //       <p key={resObj[prop].id}>
+  //         {`${prop} - id: ${resObj[prop].id}, style: {${strStyle}} `}
+  //       </p>
+  //     ]);
+  //     strStyle = "";
+  //     // arr.push(`${resObj[prop]}: ${prop},`);
+  //   }
+  // };
   return (
     <div style={divStyle}>
       <button className="btn btn-primary" onClick={showObj}>

@@ -52,6 +52,25 @@ function App() {
     setResObj(Object.assign(resObj, obj));
     console.log("%%%", resObj);
   };
+  //----------------
+  const [arr, setArr] = useState([]);
+  // const arr = [];
+  let strStyle = "";
+  const showObj = () => {
+    for (let prop in resObj) {
+      for (let key in resObj[prop].style) {
+        strStyle += ` ${key}: ${resObj[prop].style[key]}, `;
+      }
+      setArr([
+        ...arr,
+        <p key={resObj[prop].id}>
+          {`${prop} - id: ${resObj[prop].id}, style: {${strStyle}} `}
+        </p>
+      ]);
+      strStyle = "";
+    }
+  };
+  //----------------
 
   const show = event => {
     event.preventDefault();
@@ -66,7 +85,7 @@ function App() {
       }}
     >
       <SetForm idList={idList} saveChanges={saveChanges} show={show} />
-      <ShowObject resObj={resObj} />
+      <ShowObject resObj={resObj} showObj={showObj} arr={arr} />
     </div>
   );
 }
