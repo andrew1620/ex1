@@ -1,7 +1,7 @@
 import React from "react";
 import IdList from "../idList/idList";
 
-export default function SetForm({ idList, saveChanges, show }) {
+export default function SetForm({ idList, saveChanges, btnSendClick }) {
   const formStyle = {
     border: "3px solid #eee",
     padding: "5px 10px",
@@ -195,7 +195,11 @@ export default function SetForm({ idList, saveChanges, show }) {
         </div>
       </div>
 
-      <button className="btn btn-primary" data-name="btnSend" onClick={show}>
+      <button
+        className="btn btn-primary"
+        data-name="btnSend"
+        onClick={btnSendClick}
+      >
         Отправить
       </button>
     </form>
