@@ -7,6 +7,7 @@ export default function SetForm({ idList, saveChanges, btnSendClick }) {
     padding: "5px 10px",
     boxSizing: "border-box",
     borderRadius: "15px",
+    // borderRadius: "15px 0 0 15px",
     width: "700px",
     margin: "0"
   };

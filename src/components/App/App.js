@@ -11,8 +11,8 @@ function App() {
     { id: 4, text: "layer 4" }
   ]);
 
-  const [layer, setLayer] = useState({});
-  const [p, setP] = useState(<p></p>);
+  const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
+  const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
   const saveChanges = event => {
     if (event.target.dataset.name === "btnSend") {
       event.preventDefault();
@@ -55,7 +55,6 @@ function App() {
     if ("" in styleBuffer) delete styleBuffer[""];
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
     setLayer(Object.assign(layer, { style: styleBuffer }));
-    // if (event.target.tagName === "INPUT") event.target.value = ""; //Удаление написанного текста в инпуте, если нужно - откомментировать
 
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
