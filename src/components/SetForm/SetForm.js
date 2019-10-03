@@ -1,7 +1,13 @@
 import React from "react";
 import IdList from "../idList/idList";
 
-export default function SetForm({ idList, saveChanges, btnSendClick }) {
+export default function SetForm({
+  idList,
+  saveChanges,
+  btnSendClick,
+  addLayer,
+  showToolTip
+}) {
   const formStyle = {
     border: "3px solid #eee",
     padding: "5px 10px",
@@ -11,9 +17,52 @@ export default function SetForm({ idList, saveChanges, btnSendClick }) {
     width: "700px",
     margin: "0"
   };
+  const divAddLayerStyle = {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between"
+  };
+  const addLayerTooltipStyle = {
+    border: "1px solid black",
+    boxSizing: "border-box",
+    padding: "5px 10px",
+    fontFamily: "Arial",
+    fontStyle: "italic",
+    borderRadius: "5px",
+    fontSize: "13px",
+    position: "absolute",
+    background: "white",
+    display: "none",
+    zIndex: "1"
+  };
   return (
     <form className="container" style={formStyle} onBlur={saveChanges}>
+      <label htmlFor="layerSel" className="col-form-label">
+        Выберите слой
+      </label>
       <IdList idList={idList} />
+
+      <div style={divAddLayerStyle}>
+        <p className="addLayerTooltip" style={addLayerTooltipStyle}>
+          Если необходимо добавить слой - введите название и нажмите добавить
+        </p>
+        <input
+          type="text"
+          id="addLayerInput"
+          className="form-control"
+          data-name="addLayerInput"
+          placeholder="Введите название слоя"
+          style={{ maxWidth: "530px" }}
+          onMouseOver={showToolTip}
+        />
+        <button
+          className="btn btn-primary"
+          onClick={addLayer}
+          data-name="btnAddLayer"
+        >
+          Добавить слой
+        </button>
+      </div>
 
       <div className="form-row">
         <div className="col-md-4 mb-3">

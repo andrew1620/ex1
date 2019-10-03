@@ -15,7 +15,11 @@ function IdList({ idList }) {
     );
   });
   return (
-    <select className="custom-select mr-sm-2" data-name="layerSel">
+    <select
+      className="custom-select mr-sm-2"
+      data-name="layerSel"
+      id="layerSel"
+    >
       {list}
     </select>
   );

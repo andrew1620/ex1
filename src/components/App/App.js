@@ -4,7 +4,7 @@ import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
 
 function App() {
-  const [idList] = useState([
+  const [idList, setIdList] = useState([
     { id: 1, text: "layer 1" },
     { id: 2, text: "layer 2" },
     { id: 3, text: "layer 3" },
@@ -12,9 +12,33 @@ function App() {
   ]);
 
   const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
+  const addLayer = event => {
+    event.preventDefault();
+    setIdList([
+      ...idList,
+      { id: "userLayer", text: event.target.previousSibling.value }
+    ]);
+    // let selectLayer = document.querySelector("#root div form select");
+    //Чтобы сначала добавил в массив а потом назначил selected, иначе устанавливается предпоследний т.к. не успевает отрендериться
+    // setTimeout(() => {//не пашет, еще нет последний эл-т не добавленный
+    //   selectLayer.options[selectLayer.options.length - 1].selected = true;
+    //   setLayer(
+    //     Object.assign(layer, {
+    //       name: idList[idList.length - 1].text,
+    //       style: {}
+    //     })
+    //   );
+    //   console.log(idList);
+    // });
+  };
+
   const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
   const saveChanges = event => {
-    if (event.target.dataset.name === "btnSend") {
+    if (
+      event.target.dataset.name === "btnSend" ||
+      event.target.dataset.name === "btnAddLayer" ||
+      event.target.dataset.name === "addLayerInput"
+    ) {
       event.preventDefault();
       return;
     }
@@ -79,6 +103,16 @@ function App() {
     event.preventDefault();
   };
 
+  const showToolTip = event => {
+    const targetCoords = event.target.getBoundingClientRect();
+    let p = event.target.parentElement.querySelector(".addLayerTooltip");
+    p.style.display = "inline-block";
+    p.style.left = targetCoords.left + event.target.offsetWidth / 2 + "px";
+    p.style.top = targetCoords.bottom + 5 + "px";
+    p.style.opacity = 1;
+    setTimeout(() => (p.style.display = "none"), 1500);
+  };
+
   return (
     <div
       style={{
@@ -92,6 +126,8 @@ function App() {
         idList={idList}
         saveChanges={saveChanges}
         btnSendClick={btnSendClick}
+        addLayer={addLayer}
+        showToolTip={showToolTip}
       />
       <ShowObject p={p} />
     </div>
