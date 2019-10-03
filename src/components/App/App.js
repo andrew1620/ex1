@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
+import ShowFormObject from "../ShowFormObject/ShowFormObject";
 
 function App() {
   const [idList, setIdList] = useState([
@@ -80,6 +81,7 @@ function App() {
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
     setLayer(Object.assign(layer, { style: styleBuffer }));
 
+    console.log(layer);
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
   };
@@ -103,15 +105,26 @@ function App() {
     event.preventDefault();
   };
 
-  const showToolTip = event => {
-    const targetCoords = event.target.getBoundingClientRect();
-    let p = event.target.parentElement.querySelector(".addLayerTooltip");
-    p.style.display = "inline-block";
-    p.style.left = targetCoords.left + event.target.offsetWidth / 2 + "px";
-    p.style.top = targetCoords.bottom + 5 + "px";
-    p.style.opacity = 1;
-    setTimeout(() => (p.style.display = "none"), 1500);
+  const showFillPropery = event => {
+    // event.target.parentElement.parentElement.nextElementSibling.style.display =
+    //   "flex";
+    // event.target.parentElement.nextElementSibling.hidden = !event.target
+    //   .parentElement.nextElementSibling.hidden;
+    if (event.target.tagName === "INPUT") {
+      event.target.parentElement.parentElement.nextElementSibling.hidden = !event
+        .target.parentElement.parentElement.nextElementSibling.hidden;
+    }
   };
+
+  // const showToolTip = event => { //ф-ия для показа подсказки
+  //   const targetCoords = event.target.getBoundingClientRect();
+  //   let p = event.target.parentElement.querySelector(".addLayerTooltip");
+  //   p.style.display = "inline-block";
+  //   p.style.left = targetCoords.left + event.target.offsetWidth / 2 + "px";
+  //   p.style.top = targetCoords.bottom + 5 + "px";
+  //   p.style.opacity = 1;
+  //   setTimeout(() => (p.style.display = "none"), 1500);
+  // };
 
   return (
     <div
@@ -127,9 +140,13 @@ function App() {
         saveChanges={saveChanges}
         btnSendClick={btnSendClick}
         addLayer={addLayer}
-        showToolTip={showToolTip}
+        // showToolTip={showToolTip}
+        showFillPropery={showFillPropery}
       />
-      <ShowObject p={p} />
+      <div>
+        <ShowObject p={p} />
+        <ShowFormObject />
+      </div>
     </div>
   );
 }

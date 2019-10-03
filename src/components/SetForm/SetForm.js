@@ -6,7 +6,8 @@ export default function SetForm({
   saveChanges,
   btnSendClick,
   addLayer,
-  showToolTip
+  showToolTip,
+  showFillPropery
 }) {
   const formStyle = {
     border: "3px solid #eee",
@@ -22,19 +23,19 @@ export default function SetForm({
     flexWrap: "wrap",
     justifyContent: "space-between"
   };
-  const addLayerTooltipStyle = {
-    border: "1px solid black",
-    boxSizing: "border-box",
-    padding: "5px 10px",
-    fontFamily: "Arial",
-    fontStyle: "italic",
-    borderRadius: "5px",
-    fontSize: "13px",
-    position: "absolute",
-    background: "white",
-    display: "none",
-    zIndex: "1"
-  };
+  // const addLayerTooltipStyle = { // стили для подсказки
+  //   border: "1px solid black",
+  //   boxSizing: "border-box",
+  //   padding: "5px 10px",
+  //   fontFamily: "Arial",
+  //   fontStyle: "italic",
+  //   borderRadius: "5px",
+  //   fontSize: "13px",
+  //   position: "absolute",
+  //   background: "white",
+  //   display: "none",
+  //   zIndex: "1"
+  // };
   return (
     <form className="container" style={formStyle} onBlur={saveChanges}>
       <label htmlFor="layerSel" className="col-form-label">
@@ -43,9 +44,9 @@ export default function SetForm({
       <IdList idList={idList} />
 
       <div style={divAddLayerStyle}>
-        <p className="addLayerTooltip" style={addLayerTooltipStyle}>
+        {/* <p className="addLayerTooltip" style={addLayerTooltipStyle}> //подсказка
           Если необходимо добавить слой - введите название и нажмите добавить
-        </p>
+        </p> */}
         <input
           type="text"
           id="addLayerInput"
@@ -65,21 +66,33 @@ export default function SetForm({
       </div>
 
       <div className="form-row">
-        <div className="col-md-4 mb-3">
+        <div className="col-md-6">
+          <label htmlFor="form" className="col-form-label">
+            Форма
+          </label>
+          <select name="formSelect" id="form" className="custom-select mr-sm-2">
+            <option value="circle">Circle</option>
+            <option value="polyline">Polilyne</option>
+            <option value="polygon">Polygon</option>
+            <option value="rectangle">Rectangle</option>
+          </select>
+        </div>
+        <div className="col-md-6">
           <label htmlFor="color" className="col-form-label">
             color
           </label>
           <input id="color" type="text" className="form-control" />
         </div>
-
-        <div className="col-md-4 mb-3">
+      </div>
+      <div className="form-row">
+        <div className="col-md-6">
           <label htmlFor="weight" className="col-form-label">
             weight
           </label>
           <input id="weight" type="text" className="form-control" />
         </div>
 
-        <div className="col-md-4 mb-3">
+        <div className="col-md-6">
           <label htmlFor="opacity" className="col-form-label">
             opacity
           </label>
@@ -105,38 +118,78 @@ export default function SetForm({
       </div>
 
       <div className="form-row">
-        <div className="col-md-4 mb-3">
-          <input
-            type="checkbox"
-            id="bubblingMouseEvents"
-            className="form-check-input"
-            style={{ marginLeft: "5px" }}
-          />
-          <label
-            htmlFor="bubblingMouseEvents"
-            className="form-check-label"
-            style={{ marginLeft: "25px" }}
+        <div className="col-md-6">
+          <label htmlFor="lineCap" className="col-form-label">
+            lineCap
+          </label>
+          <select
+            id="lineCap"
+            name="lineCapSel"
+            className="custom-select mr-sm-2"
           >
-            bubblingMouseEvents
-          </label>
+            <option value="round">round</option>
+          </select>
         </div>
 
-        <div className="col-md-4 mb-3">
-          <input id="stroke" type="checkbox" className="form-check-input" />
-          <label htmlFor="stroke" className="form-check-label">
-            stroke
+        <div className="col-md-6">
+          <label htmlFor="lineJoin" className="col-form-label">
+            lineJoin
           </label>
-        </div>
-
-        <div className="form-row">
-          <label htmlFor="fill" className="form-check-label">
-            fill
-          </label>
-          <input id="fill" type="checkbox" className="form-check-input" />
+          <select
+            id="lineJoin"
+            name="lineJoinSel"
+            className="custom-select mr-sm-2"
+          >
+            <option value="round">round</option>
+          </select>
         </div>
       </div>
 
       <div className="form-row">
+        <div className="col-md-6">
+          <label htmlFor="dashArray" className="col-form-label">
+            dashArray
+          </label>
+          <select
+            id="dashArray"
+            name="dashArrSel"
+            className="custom-select mr-sm-2"
+          >
+            <option value="null">null</option>
+          </select>
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="dashOffset" className="col-form-label">
+            dashOffset
+          </label>
+          <select
+            id="dashOffset"
+            name="dashOffSel"
+            className="custom-select mr-sm-2"
+          >
+            <option value="null">null</option>
+          </select>
+        </div>
+      </div>
+      <div className="form-row" data-name="qqq">
+        <div className="col-md-6" onClick={showFillPropery}>
+          <label
+            htmlFor="fill"
+            className="form-check-label"
+            // onClick={showFillPropery}
+          >
+            fill
+          </label>
+          <input
+            id="fill"
+            type="checkbox"
+            className="form-check-input"
+            style={{ marginLeft: "7px" }}
+            // onClick={showFillPropery}
+          />
+        </div>
+      </div>
+      <div className="form-row" hidden>
         <div className="col-md-4 mb-3">
           <label htmlFor="fillColor">fillColor</label>
           <input id="fillColor" type="text" className="form-control" />
@@ -171,77 +224,6 @@ export default function SetForm({
           >
             <option value="evenodd">evenodd</option>
           </select>
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="col-md-4 mb-3">
-          <label htmlFor="lineCap" className="col-form-label">
-            lineCap
-          </label>
-          <select
-            id="lineCap"
-            name="lineCapSel"
-            className="custom-select mr-sm-2"
-          >
-            <option value="round">round</option>
-          </select>
-        </div>
-
-        <div className="col-md-4 mb-3">
-          <label htmlFor="lineJoin" className="col-form-label">
-            lineJoin
-          </label>
-          <select
-            id="lineJoin"
-            name="lineJoinSel"
-            className="custom-select mr-sm-2"
-          >
-            <option value="round">round</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="col-md-4 mb-3">
-          <label htmlFor="dashArray" className="col-form-label">
-            dashArray
-          </label>
-          <select
-            id="dashArray"
-            name="dashArrSel"
-            className="custom-select mr-sm-2"
-          >
-            <option value="null">null</option>
-          </select>
-        </div>
-        <div className="col-md-4 mb-3">
-          <label htmlFor="dashOffset" className="col-form-label">
-            dashOffset
-          </label>
-          <select
-            id="dashOffset"
-            name="dashOffSel"
-            className="custom-select mr-sm-2"
-          >
-            <option value="null">null</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="form-row">
-        <div className="col-md-4 mb-3">
-          <label htmlFor="renderer" className="col-form-label">
-            renderer
-          </label>
-          <input type="text" id="renderer" className="form-control" />
-        </div>
-
-        <div className="col-md-4 mb-3">
-          <label htmlFor="className" className="col-form-label">
-            className
-          </label>
-          <input type="text" id="className" className="form-control" />
         </div>
       </div>
 

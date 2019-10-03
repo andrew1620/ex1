@@ -9,7 +9,8 @@ export default function ShowObject({ p }) {
     padding: "10px",
     boxSizing: "border-box",
     wordWrap: "break-word",
-    width: "350px"
+    width: "350px",
+    height: "50%"
   };
   return <div style={divStyle}> {p} </div>;
 }
