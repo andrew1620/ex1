@@ -7,7 +7,7 @@ export default function SetForm({
   btnSendClick,
   addLayer,
   showToolTip,
-  showFillPropery
+  showFillProperty
 }) {
   const formStyle = {
     border: "3px solid #eee",
@@ -70,7 +70,12 @@ export default function SetForm({
           <label htmlFor="form" className="col-form-label">
             Форма
           </label>
-          <select name="formSelect" id="form" className="custom-select mr-sm-2">
+          <select
+            name="formSelect"
+            id="form"
+            data-property="form"
+            className="custom-select mr-sm-2"
+          >
             <option value="circle">Circle</option>
             <option value="polyline">Polilyne</option>
             <option value="polygon">Polygon</option>
@@ -81,7 +86,12 @@ export default function SetForm({
           <label htmlFor="color" className="col-form-label">
             color
           </label>
-          <input id="color" type="text" className="form-control" />
+          <input
+            id="color"
+            data-property="color"
+            type="text"
+            className="form-control"
+          />
         </div>
       </div>
       <div className="form-row">
@@ -89,7 +99,32 @@ export default function SetForm({
           <label htmlFor="weight" className="col-form-label">
             weight
           </label>
-          <input id="weight" type="text" className="form-control" />
+          {/* <input
+            id="weight"
+            data-property="weight"
+            type="text"
+            className="form-control"
+          /> */}
+          <select
+            name="wightSelect"
+            id="weight"
+            data-property="weight"
+            className="custom-select mr-sm-2"
+          >
+            <option value="normal">normal</option>
+            <option value="bold">bold</option>
+            <option value="bolder">bolder</option>
+            <option value="lighter">lighter</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+          </select>
         </div>
 
         <div className="col-md-6">
@@ -98,6 +133,7 @@ export default function SetForm({
           </label>
           <select
             id="opacity"
+            data-property="opacity"
             name="opacitySel"
             className="custom-select mr-sm-2"
           >
@@ -124,6 +160,7 @@ export default function SetForm({
           </label>
           <select
             id="lineCap"
+            data-property="lineCap"
             name="lineCapSel"
             className="custom-select mr-sm-2"
           >
@@ -137,6 +174,7 @@ export default function SetForm({
           </label>
           <select
             id="lineJoin"
+            data-property="lineJoin"
             name="lineJoinSel"
             className="custom-select mr-sm-2"
           >
@@ -152,6 +190,7 @@ export default function SetForm({
           </label>
           <select
             id="dashArray"
+            data-property="dashArray"
             name="dashArrSel"
             className="custom-select mr-sm-2"
           >
@@ -164,6 +203,7 @@ export default function SetForm({
           </label>
           <select
             id="dashOffset"
+            data-property="dashOffset"
             name="dashOffSel"
             className="custom-select mr-sm-2"
           >
@@ -172,7 +212,7 @@ export default function SetForm({
         </div>
       </div>
       <div className="form-row" data-name="qqq">
-        <div className="col-md-6" onClick={showFillPropery}>
+        <div className="col-md-6" onClick={showFillProperty}>
           <label
             htmlFor="fill"
             className="form-check-label"
@@ -182,6 +222,7 @@ export default function SetForm({
           </label>
           <input
             id="fill"
+            data-property="fill"
             type="checkbox"
             className="form-check-input"
             style={{ marginLeft: "7px" }}
@@ -192,13 +233,19 @@ export default function SetForm({
       <div className="form-row" hidden>
         <div className="col-md-4 mb-3">
           <label htmlFor="fillColor">fillColor</label>
-          <input id="fillColor" type="text" className="form-control" />
+          <input
+            id="fillColor"
+            data-property="fillColor"
+            type="text"
+            className="form-control"
+          />
         </div>
 
         <div className="col-md-4 mb-3">
           <label htmlFor="fillOpacity">fillOpacity</label>
           <select
             id="fillOpacity"
+            data-property="fillOpacity"
             name="fillOpacitySel"
             className="custom-select mr-sm-2"
           >
@@ -219,6 +266,7 @@ export default function SetForm({
           <label htmlFor="fillRule">fillRule</label>
           <select
             id="fillRule"
+            data-property="fillRule"
             name="fillRuleSel"
             className="custom-select mr-sm-2"
           >

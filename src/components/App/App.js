@@ -15,13 +15,15 @@ function App() {
   const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
   const addLayer = event => {
     event.preventDefault();
+
     setIdList([
       ...idList,
-      { id: "userLayer", text: event.target.previousSibling.value }
+      { text: event.target.previousSibling.value, id: "userId" }
     ]);
-    // let selectLayer = document.querySelector("#root div form select");
-    //Чтобы сначала добавил в массив а потом назначил selected, иначе устанавливается предпоследний т.к. не успевает отрендериться
-    // setTimeout(() => {//не пашет, еще нет последний эл-т не добавленный
+    // let selectLayer = document.querySelector("#root div form select"); //Вся эта хрень, чтобы при задании нового слоя он автоматически выбирался в селекте, так ее допилить решается проблема с id
+    // //Чтобы сначала добавил в массив а потом назначил selected, иначе устанавливается предпоследний т.к. не успевает отрендериться
+    // setTimeout(() => {
+    //   //не пашет, на странице последний эл-т появляется, а в массиве его еще нет
     //   selectLayer.options[selectLayer.options.length - 1].selected = true;
     //   setLayer(
     //     Object.assign(layer, {
@@ -29,12 +31,14 @@ function App() {
     //       style: {}
     //     })
     //   );
+
     //   console.log(idList);
     // });
   };
 
   const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
   const saveChanges = event => {
+    //Отслеживаем нажатие ненужных кнопок
     if (
       event.target.dataset.name === "btnSend" ||
       event.target.dataset.name === "btnAddLayer" ||
@@ -69,14 +73,26 @@ function App() {
     const styleBuffer = Object.assign({}, layer.style);
     //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
     if (event.target.type === "checkbox") {
-      styleBuffer[event.target.id] = event.target.checked;
+      styleBuffer[event.target.dataset.property] = event.target.checked;
+      // После отмены флажка fill все fill-свойства удаляются из объекта
+      if (styleBuffer[event.target.dataset.property] === false) {
+        for (let prop in styleBuffer) {
+          if (
+            prop === "fill" ||
+            prop === "fillColor" ||
+            prop === "fillOpacity" ||
+            prop === "fillRule"
+          )
+            delete styleBuffer[prop];
+        }
+      }
     } else if (event.target.type === "text") {
       //Если не написали св-во оно удаляется (иначе будет пустое)
       event.target.value === ""
-        ? delete styleBuffer[event.target.id]
-        : (styleBuffer[event.target.id] = event.target.value);
-    } else styleBuffer[event.target.id] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
-    //после выбора слоя (только после выбора слоя, если не выбирать такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
+        ? delete styleBuffer[event.target.dataset.property]
+        : (styleBuffer[event.target.dataset.property] = event.target.value);
+    } else styleBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
+    //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
     if ("" in styleBuffer) delete styleBuffer[""];
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
     setLayer(Object.assign(layer, { style: styleBuffer }));
@@ -86,7 +102,7 @@ function App() {
     showObj();
   };
 
-  //Ф-ия вывода набранного объекта справа в рамке
+  //Ф-ия вывода свойств набранного объекта справа в рамке
   const showObj = () => {
     let strStyle = "";
     for (let key in layer.style) {
@@ -105,11 +121,8 @@ function App() {
     event.preventDefault();
   };
 
-  const showFillPropery = event => {
-    // event.target.parentElement.parentElement.nextElementSibling.style.display =
-    //   "flex";
-    // event.target.parentElement.nextElementSibling.hidden = !event.target
-    //   .parentElement.nextElementSibling.hidden;
+  const showFillProperty = event => {
+    //Открытие доп. свойств при нажатии на fill
     if (event.target.tagName === "INPUT") {
       event.target.parentElement.parentElement.nextElementSibling.hidden = !event
         .target.parentElement.parentElement.nextElementSibling.hidden;
@@ -131,6 +144,7 @@ function App() {
       style={{
         margin: "10px auto",
         display: "flex",
+        // flexWrap: "wrap",
         justifyContent: "center",
         width: "70%"
       }}
@@ -141,11 +155,11 @@ function App() {
         btnSendClick={btnSendClick}
         addLayer={addLayer}
         // showToolTip={showToolTip}
-        showFillPropery={showFillPropery}
+        showFillProperty={showFillProperty}
       />
       <div>
         <ShowObject p={p} />
-        <ShowFormObject />
+        <ShowFormObject layerStyle={layer.style} />
       </div>
     </div>
   );

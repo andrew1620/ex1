@@ -9,7 +9,12 @@ function IdList({ idList }) {
   // ]);
   const list = idList.map((item, index) => {
     return (
-      <option key={item.id} value={index}>
+      <option
+        key={item.id ? item.id : index * Math.random() * 10}
+        value={index}
+      >
+        {" "}
+        {/*надо допилить, в индекс как ключ не пойдет*/}
         {item.text}
       </option>
     );
