@@ -7,7 +7,8 @@ export default function SetForm({
   btnSendClick,
   addLayer,
   showToolTip,
-  showFillProperty
+  showFillProperty,
+  showTooltip
 }) {
   const formStyle = {
     border: "3px solid #eee",
@@ -37,7 +38,12 @@ export default function SetForm({
   //   zIndex: "1"
   // };
   return (
-    <form className="container" style={formStyle} onBlur={saveChanges}>
+    <form
+      className="container"
+      style={formStyle}
+      onBlur={saveChanges}
+      // onMouseOver={showTooltip}
+    >
       <label htmlFor="layerSel" className="col-form-label">
         Выберите слой
       </label>
@@ -53,6 +59,7 @@ export default function SetForm({
           className="form-control"
           data-name="addLayerInput"
           placeholder="Введите название слоя"
+          data-tooltip="qqqqq"
           style={{ maxWidth: "530px" }}
           onMouseOver={showToolTip}
         />
@@ -75,6 +82,7 @@ export default function SetForm({
             id="form"
             data-property="form"
             className="custom-select mr-sm-2"
+            data-tooltip="select"
           >
             <option value="circle">Circle</option>
             <option value="polyline">Polilyne</option>

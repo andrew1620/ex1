@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
 import ShowFormObject from "../ShowFormObject/ShowFormObject";
+import Tooltip from "../Tooltip/Tooltip";
 
 function App() {
   const [idList, setIdList] = useState([
@@ -11,6 +12,12 @@ function App() {
     { id: 3, text: "layer 3" },
     { id: 4, text: "layer 4" }
   ]);
+
+  // const url = "http://localhost:3000/layers";
+  // const request = new XMLHttpRequest();
+  // request.open("GET", url, false);
+  // request.send();
+  // console.log(request.response);
 
   const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
   const addLayer = event => {
@@ -97,7 +104,7 @@ function App() {
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
     setLayer(Object.assign(layer, { style: styleBuffer }));
 
-    console.log(layer);
+    // console.log(layer);
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
   };
@@ -129,15 +136,17 @@ function App() {
     }
   };
 
-  // const showToolTip = event => { //ф-ия для показа подсказки
-  //   const targetCoords = event.target.getBoundingClientRect();
-  //   let p = event.target.parentElement.querySelector(".addLayerTooltip");
-  //   p.style.display = "inline-block";
-  //   p.style.left = targetCoords.left + event.target.offsetWidth / 2 + "px";
-  //   p.style.top = targetCoords.bottom + 5 + "px";
-  //   p.style.opacity = 1;
-  //   setTimeout(() => (p.style.display = "none"), 1500);
-  // };
+  const [tooltipProps, setTooltipProps] = useState({});
+  const showTooltip = event => {
+    if (event.target.dataset.tooltip) {
+      setTooltipProps({
+        positionLeft: event.clientX,
+        positionTop: event.clientY,
+        tooltipText: event.target.dataset.tooltip
+      });
+      // alert(event.clientX);
+    } else return;
+  };
 
   return (
     <div
@@ -156,11 +165,13 @@ function App() {
         addLayer={addLayer}
         // showToolTip={showToolTip}
         showFillProperty={showFillProperty}
+        showTooltip={showTooltip}
       />
       <div>
         <ShowObject p={p} />
         <ShowFormObject layerStyle={layer.style} />
       </div>
+      {/* <Tooltip tooltipProps={tooltipProps} /> */}
     </div>
   );
 }

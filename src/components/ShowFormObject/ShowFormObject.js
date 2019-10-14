@@ -8,7 +8,7 @@ export default ({ layerStyle }) => {
     display: "flex"
   };
 
-  const [objectStyle, setObjectStyle] = useState({
+  const [objectStyle] = useState({
     height: "60%",
     width: "60%",
     margin: "auto"
