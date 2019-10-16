@@ -80,7 +80,7 @@ export default function SetForm({
           <select
             name="formSelect"
             id="form"
-            data-property="form"
+            data-property="shape"
             className="custom-select mr-sm-2"
             data-tooltip="select"
           >

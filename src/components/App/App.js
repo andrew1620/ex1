@@ -6,18 +6,22 @@ import ShowFormObject from "../ShowFormObject/ShowFormObject";
 import Tooltip from "../Tooltip/Tooltip";
 
 function App() {
-  const [idList, setIdList] = useState([
-    { id: 1, text: "layer 1" },
-    { id: 2, text: "layer 2" },
-    { id: 3, text: "layer 3" },
-    { id: 4, text: "layer 4" }
-  ]);
+  const url = "http://localhost:3000/layers";
 
-  // const url = "http://localhost:3000/layers";
-  // const request = new XMLHttpRequest();
-  // request.open("GET", url, false);
-  // request.send();
-  // console.log(request.response);
+  const [idList, setIdList] = useState([]);
+  try {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => setIdList(data));
+  } catch (e) {
+    console.log("Ошибка при получении списка слоев", e);
+  }
+  // async function getLayerList() { //Пример получения через async await, может понадобиться когда нужно будет обработать выбор слоя (при создании нового сразу отправлять на сервер и перерендерить селект, тогда он вернется с id и уже будет в списке и можно будет добавить автоматический выбор в селекте)
+  //   const response = await fetch(url);
+  //   const data = await response.json();
+  //   setIdList(data);
+  // }
+  // getLayerList();
 
   const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
   const addLayer = event => {
@@ -25,22 +29,12 @@ function App() {
 
     setIdList([
       ...idList,
-      { text: event.target.previousSibling.value, id: "userId" }
+      {
+        name: event.target.previousSibling.value,
+        id: "userId",
+        childLayers: []
+      }
     ]);
-    // let selectLayer = document.querySelector("#root div form select"); //Вся эта хрень, чтобы при задании нового слоя он автоматически выбирался в селекте, так ее допилить решается проблема с id
-    // //Чтобы сначала добавил в массив а потом назначил selected, иначе устанавливается предпоследний т.к. не успевает отрендериться
-    // setTimeout(() => {
-    //   //не пашет, на странице последний эл-т появляется, а в массиве его еще нет
-    //   selectLayer.options[selectLayer.options.length - 1].selected = true;
-    //   setLayer(
-    //     Object.assign(layer, {
-    //       name: idList[idList.length - 1].text,
-    //       style: {}
-    //     })
-    //   );
-
-    //   console.log(idList);
-    // });
   };
 
   const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
@@ -56,77 +50,113 @@ function App() {
     }
     //Отслеживание нажатия на селект выбора слоя
     if (event.target.dataset.name === "layerSel") {
-      setLayer(
-        Object.assign(layer, {
-          name: idList[event.target.value].text,
-          id: idList[event.target.value].id,
-          style: {}
-        })
-      );
+      if (idList[event.target.value].id !== "userId") {
+        let requiredLayer;
+        async function getRequredLayer() {
+          let response = await fetch(
+            `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
+          );
+          requiredLayer = await response.json();
+          Object.assign(layer, requiredLayer);
+        }
+        getRequredLayer();
+      } else {
+        setLayer(
+          Object.assign(layer, {
+            name: idList[event.target.value].name,
+            id: idList[event.target.value].id,
+            objects: idList[event.target.value].style || {}
+          })
+        );
+      }
       return;
     }
-    //Проверка: если пропустили выбор слоя, берется первый из списка
+
     if (!("name" in layer)) {
-      setLayer(
-        Object.assign(layer, {
-          name: idList[0].text,
-          id: idList[0].id,
-          style: {}
-        })
-      );
+      let requiredLayer;
+      async function getRequredLayer() {
+        let response = await fetch(`http://localhost:3000/layers/configs/${0}`);
+        requiredLayer = await response.json();
+        // console.log(requiredLayer);
+        Object.assign(layer, requiredLayer);
+        setLayer(Object.assign(layer, requiredLayer));
+      }
+      getRequredLayer();
     }
 
     //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.style
-    const styleBuffer = Object.assign({}, layer.style);
+    const objectsBuffer = Object.assign({}, layer.objects);
+
     //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
     if (event.target.type === "checkbox") {
-      styleBuffer[event.target.dataset.property] = event.target.checked;
+      objectsBuffer[event.target.dataset.property] = event.target.checked;
       // После отмены флажка fill все fill-свойства удаляются из объекта
-      if (styleBuffer[event.target.dataset.property] === false) {
-        for (let prop in styleBuffer) {
+      if (objectsBuffer[event.target.dataset.property] === false) {
+        for (let prop in objectsBuffer) {
           if (
             prop === "fill" ||
             prop === "fillColor" ||
             prop === "fillOpacity" ||
             prop === "fillRule"
           )
-            delete styleBuffer[prop];
+            delete objectsBuffer[prop];
         }
       }
     } else if (event.target.type === "text") {
       //Если не написали св-во оно удаляется (иначе будет пустое)
       event.target.value === ""
-        ? delete styleBuffer[event.target.dataset.property]
-        : (styleBuffer[event.target.dataset.property] = event.target.value);
-    } else styleBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
+        ? delete objectsBuffer[event.target.dataset.property]
+        : (objectsBuffer[event.target.dataset.property] = event.target.value);
+    } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
     //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
-    if ("" in styleBuffer) delete styleBuffer[""];
+    if ("" in objectsBuffer) delete objectsBuffer[""];
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
-    setLayer(Object.assign(layer, { style: styleBuffer }));
+    setLayer(Object.assign(layer, { objects: objectsBuffer }));
 
-    // console.log(layer);
+    console.log(layer);
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
   };
 
   //Ф-ия вывода свойств набранного объекта справа в рамке
   const showObj = () => {
-    let strStyle = "";
-    for (let key in layer.style) {
-      strStyle += ` ${key}: ${layer.style[key]}, `;
+    let strObjects = "";
+    for (let key in layer.objects) {
+      strObjects += ` ${key}: ${layer.objects[key]}, `;
     }
     setP(
       <p style={{ fontFamily: "Arial" }}>
-        <b>name:</b> {layer.name}, <b>id:</b> {layer.id}, <b>style:</b>{" "}
-        {`{${strStyle}}`}
+        <b>name:</b> {layer.name}, <b>id:</b> {layer.id}, <b>objects:</b>{" "}
+        {`{${strObjects}}`}
       </p>
     );
   };
 
-  const btnSendClick = event => {
-    //Обработчик нажатия на кнопку Отправить
+  async function btnSendClick(event) {
     event.preventDefault();
-  };
+    let sendMethod, url;
+    if (layer.id === "userId") {
+      sendMethod = "PUT";
+      url = "http://localhost:3000/layers/configs";
+    } else {
+      //надо добавить разрешение на запрос изменения данных на сервере
+      sendMethod = "PUSH";
+      url = `http://localhost:3000/layers/configs/${layer.id}`;
+    }
+
+    try {
+      let response = await fetch(url, {
+        method: sendMethod,
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify(layer)
+      });
+      alert("Успешно");
+    } catch (e) {
+      alert(`Ошибка ${e}`);
+    }
+  }
 
   const showFillProperty = event => {
     //Открытие доп. свойств при нажатии на fill
@@ -169,7 +199,7 @@ function App() {
       />
       <div>
         <ShowObject p={p} />
-        <ShowFormObject layerStyle={layer.style} />
+        <ShowFormObject layerStyle={layer.objects} />
       </div>
       {/* <Tooltip tooltipProps={tooltipProps} /> */}
     </div>
