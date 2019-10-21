@@ -1,7 +1,8 @@
 import React from "react";
 
-function IdList({ idList }) {
-  const list = idList.map((item, index) => {
+function IdList({ layersArr = [], showSetForm }) {
+  // console.log("from Idlist ", layersArr);
+  const list = layersArr.map((item, index) => {
     return (
       <option
         key={item.id ? item.id : index * Math.random() * 10}
@@ -19,6 +20,7 @@ function IdList({ idList }) {
       className="custom-select mr-sm-2"
       data-name="layerSel"
       id="layerSel"
+      onClick={showSetForm}
     >
       {list}
     </select>

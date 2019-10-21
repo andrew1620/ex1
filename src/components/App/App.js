@@ -1,87 +1,79 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
 import ShowFormObject from "../ShowFormObject/ShowFormObject";
-import Tooltip from "../Tooltip/Tooltip";
+import { connect } from "react-redux";
 
-function App() {
-  const url = "http://localhost:3000/layers";
-
-  const [idList, setIdList] = useState([]);
-  try {
-    fetch(url)
-      .then(response => response.json())
-      .then(data => setIdList(data));
-  } catch (e) {
-    console.log("Ошибка при получении списка слоев", e);
-  }
+function App({ layersArr, onAddLayer, onGetLayersArr }) {
   // async function getLayerList() { //Пример получения через async await, может понадобиться когда нужно будет обработать выбор слоя (при создании нового сразу отправлять на сервер и перерендерить селект, тогда он вернется с id и уже будет в списке и можно будет добавить автоматический выбор в селекте)
   //   const response = await fetch(url);
   //   const data = await response.json();
   //   setIdList(data);
   // }
   // getLayerList();
+  const [isFetchCalled, setIsFetchCalled] = useState(false); // Состояние уже загруженных слоев, если нет то загрузить если да то не надо, инче появлялся постоянный рендер слоев
+  const url = "http://localhost:3000/layers";
+  if (!isFetchCalled) {
+    fetch(url)
+      .then(response => response.json())
+      .then(layersArr => onGetLayersArr(layersArr))
+      .catch(err => alert("Ошибка загрузки слоев " + err));
+    setIsFetchCalled(true);
+  }
 
   const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
+
   const addLayer = event => {
     event.preventDefault();
-
-    setIdList([
-      ...idList,
-      {
-        name: event.target.previousSibling.value,
-        id: "userId",
-        childLayers: []
-      }
-    ]);
+    onAddLayer({
+      name: event.target.previousSibling.value,
+      id: "userId",
+      childLayers: []
+    });
   };
 
   const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
+  const [isShowedProperties, setIsShowedProperties] = useState(false);
+  const [areShowedOutputAreas, setAreShowedOutputAreas] = useState(false);
+  const [childLayersBuffer, setChildLayersBuffer] = useState([]);
   const saveChanges = event => {
     //Отслеживаем нажатие ненужных кнопок
     if (
       event.target.dataset.name === "btnSend" ||
-      event.target.dataset.name === "btnAddLayer" ||
-      event.target.dataset.name === "addLayerInput"
+      event.target.dataset.name === "createLayerRef" ||
+      event.target.dataset.name === "btnCancel"
     ) {
       event.preventDefault();
       return;
     }
     //Отслеживание нажатия на селект выбора слоя
     if (event.target.dataset.name === "layerSel") {
-      if (idList[event.target.value].id !== "userId") {
-        let requiredLayer;
-        async function getRequredLayer() {
-          let response = await fetch(
-            `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
-          );
-          requiredLayer = await response.json();
-          Object.assign(layer, requiredLayer);
-        }
-        getRequredLayer();
-      } else {
-        setLayer(
-          Object.assign(layer, {
-            name: idList[event.target.value].name,
-            id: idList[event.target.value].id,
-            objects: idList[event.target.value].style || {}
-          })
+      let requiredLayer;
+      async function getRequredLayer() {
+        let response = await fetch(
+          `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
         );
+        requiredLayer = await response.json();
+        Object.assign(layer, requiredLayer);
+        setChildLayersBuffer([...layer.childLayers]);
       }
+      console.log(layer);
+      getRequredLayer();
       return;
     }
 
-    if (!("name" in layer)) {
-      let requiredLayer;
-      async function getRequredLayer() {
-        let response = await fetch(`http://localhost:3000/layers/configs/${0}`);
-        requiredLayer = await response.json();
-        // console.log(requiredLayer);
-        Object.assign(layer, requiredLayer);
-        setLayer(Object.assign(layer, requiredLayer));
-      }
-      getRequredLayer();
+    if (event.target.dataset.name === "addLayerInput") {
+      setIsShowedProperties(true);
+      setLayer(
+        Object.assign(layer, {
+          name: event.target.value,
+          id: "userId",
+          childLayers: [],
+          objects: {}
+        })
+      );
+      return;
     }
 
     //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.style
@@ -114,6 +106,8 @@ function App() {
     setLayer(Object.assign(layer, { objects: objectsBuffer }));
 
     console.log(layer);
+
+    setAreShowedOutputAreas(true);
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
   };
@@ -126,8 +120,10 @@ function App() {
     }
     setP(
       <p style={{ fontFamily: "Arial" }}>
-        <b>name:</b> {layer.name}, <b>id:</b> {layer.id}, <b>objects:</b>{" "}
-        {`{${strObjects}}`}
+        <b>name:</b> {layer.name}, <b>id:</b> {layer.id},
+        {layer.childLayers.length !== 0 &&
+          `<b>childLayers: </b> ${layer.childLayers},`}
+        <b>objects:</b> {`{${strObjects}}`}
       </p>
     );
   };
@@ -145,7 +141,7 @@ function App() {
     }
 
     try {
-      let response = await fetch(url, {
+      await fetch(url, {
         method: sendMethod,
         headers: {
           "Content-Type": "application/json;charset=utf-8"
@@ -153,8 +149,17 @@ function App() {
         body: JSON.stringify(layer)
       });
       alert("Успешно");
+      setIsFetchCalled(false); // нужно отрендерить новый список доступных слоев
     } catch (e) {
       alert(`Ошибка ${e}`);
+    } finally {
+      //Весь этот блок можно заменить на использование юзСтейт в сетФорм, нужен для скрытия элементов после отправки слоя на сервер
+      const select = document.querySelector("#layerSel");
+      const addLayerContainer = document.querySelector(".addLayerContainer");
+      select.hidden = false;
+      addLayerContainer.hidden = true;
+      setAreShowedOutputAreas(false);
+      setIsShowedProperties(false);
     }
   }
 
@@ -164,18 +169,6 @@ function App() {
       event.target.parentElement.parentElement.nextElementSibling.hidden = !event
         .target.parentElement.parentElement.nextElementSibling.hidden;
     }
-  };
-
-  const [tooltipProps, setTooltipProps] = useState({});
-  const showTooltip = event => {
-    if (event.target.dataset.tooltip) {
-      setTooltipProps({
-        positionLeft: event.clientX,
-        positionTop: event.clientY,
-        tooltipText: event.target.dataset.tooltip
-      });
-      // alert(event.clientX);
-    } else return;
   };
 
   return (
@@ -189,21 +182,37 @@ function App() {
       }}
     >
       <SetForm
-        idList={idList}
+        layersArr={layersArr}
         saveChanges={saveChanges}
         btnSendClick={btnSendClick}
         addLayer={addLayer}
-        // showToolTip={showToolTip}
         showFillProperty={showFillProperty}
-        showTooltip={showTooltip}
+        setIsShowedProperties={setIsShowedProperties}
+        isShowedProperties={isShowedProperties}
+        areShowedOutputAreas={areShowedOutputAreas}
+        setAreShowedOutputAreas={setAreShowedOutputAreas}
+        childLayers={childLayersBuffer}
       />
+
       <div>
-        <ShowObject p={p} />
-        <ShowFormObject layerStyle={layer.objects} />
+        {areShowedOutputAreas && <ShowObject p={p} />}
+        {areShowedOutputAreas && <ShowFormObject layerStyle={layer.objects} />}
       </div>
       {/* <Tooltip tooltipProps={tooltipProps} /> */}
     </div>
   );
 }
 
-export default App;
+export default connect(
+  state => ({
+    layersArr: state.layers
+  }),
+  dispatch => ({
+    onGetLayersArr(layersArr) {
+      dispatch({ type: "GET_LAYERS", payload: layersArr });
+    },
+    onAddLayer(layer) {
+      dispatch({ type: "ADD_LAYER", payload: layer });
+    }
+  })
+)(App);
