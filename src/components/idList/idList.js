@@ -1,6 +1,6 @@
 import React from "react";
 
-function IdList({ layersArr = [], showSetForm }) {
+function IdList({ layersArr = [], showSetForm, isHiddenSelectLayer }) {
   // console.log("from Idlist ", layersArr);
   const list = layersArr.map((item, index) => {
     return (
@@ -21,6 +21,7 @@ function IdList({ layersArr = [], showSetForm }) {
       data-name="layerSel"
       id="layerSel"
       onClick={showSetForm}
+      hidden={isHiddenSelectLayer}
     >
       {list}
     </select>

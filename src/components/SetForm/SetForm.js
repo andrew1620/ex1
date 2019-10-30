@@ -10,7 +10,18 @@ export default function SetForm({
   isShowedProperties,
   setIsShowedProperties,
   setAreShowedOutputAreas,
-  childLayers
+  childLayersBuffer,
+  showChildLayersSelect,
+  addChildLayer,
+  isShowedChildLayersSelectContainer,
+  setIsShowedChildLayersSelectContainer,
+  isShowedAddChildLayerContainer,
+  setIsShowedAddChildLayerContainer,
+  isHiddenSelectLayer,
+  isHiddenAddLayerContainer,
+  setIsHiddenAddLayerContainer,
+  setIsHiddenSelectLayer,
+  setIsCreatingChildLayer
 }) {
   const formStyle = {
     border: "3px solid #eee",
@@ -30,15 +41,14 @@ export default function SetForm({
   const showSetForm = () => {
     setIsShowedProperties(true);
   };
-  const select = document.querySelector("#layerSel");
-  const addLayerContainer = document.querySelector(".addLayerContainer");
+
   const pressCreateLayer = () => {
-    addLayerContainer.hidden = false;
-    select.hidden = true;
+    setIsHiddenAddLayerContainer(false);
+    setIsHiddenSelectLayer(true);
   };
   const cancelAddLayer = () => {
-    addLayerContainer.hidden = true;
-    select.hidden = false;
+    setIsHiddenAddLayerContainer(true);
+    setIsHiddenSelectLayer(false);
     setAreShowedOutputAreas(false);
     setIsShowedProperties(false);
   };
@@ -60,8 +70,16 @@ export default function SetForm({
           создайте новый
         </a>
       </label>
-      <IdList layersArr={layersArr} showSetForm={showSetForm} />
-      <div style={divAddLayerStyle} className="addLayerContainer" hidden>
+      <IdList
+        layersArr={layersArr}
+        showSetForm={showSetForm}
+        isHiddenSelectLayer={isHiddenSelectLayer}
+      />
+      <div
+        style={divAddLayerStyle}
+        className="addLayerContainer"
+        hidden={isHiddenAddLayerContainer}
+      >
         <input
           type="text"
           id="addLayerInput"
@@ -82,35 +100,53 @@ export default function SetForm({
       </div>
       {isShowedProperties && (
         <div className="showSetProperties">
-          <GetChildLayersList childLayers={childLayers} />
-          <button className="btn btn-primary">Добавить</button>
+          <span className="amountChildLayers">
+            Child layers: {childLayersBuffer.length}
+            <a
+              href="#"
+              className="amountChildLayersHref"
+              data-name="amountChildLayersHref"
+              onClick={showChildLayersSelect}
+            >
+              {childLayersBuffer.length === 0
+                ? isShowedAddChildLayerContainer
+                  ? "Добавить"
+                  : "Скрыть"
+                : isShowedChildLayersSelectContainer
+                ? "Показать"
+                : "Скрыть"}
+            </a>
+          </span>
 
-          {/* <div style={divAddLayerStyle}>
+          <GetChildLayersList
+            childLayersBuffer={childLayersBuffer}
+            isShowedChildLayersSelectContainer={
+              isShowedChildLayersSelectContainer
+            }
+          />
+          <div
+            style={divAddLayerStyle}
+            className="addChildLayerContainer"
+            hidden={isShowedAddChildLayerContainer}
+          >
             <input
               type="text"
-              id="addLayerInput"
+              id="addChildLayerInput"
               className="form-control"
-              data-name="addLayerInput"
-              placeholder="Введите название слоя"
+              data-name="addChildLayerInput"
+              placeholder="Введите название child layer"
               data-tooltip="qqqqq"
-              style={{ maxWidth: "530px" }}
-              onMouseOver={showToolTip}
+              style={{ maxWidth: "570px" }}
+              onClick={setIsCreatingChildLayer}
             />
             <button
-              className="btn btn-primary"
-              onClick={addLayer}
-              data-name="btnAddLayer"
+              className="btn btn-primary btnAddChildLayer"
+              data-name="btnAddChildLayer"
+              onBlur={addChildLayer}
             >
-              Добавить слой
+              Добавить
             </button>
-          </div> */}
-
-          {/* <label htmlFor="childLayersSelect" className="col-form-label">
-            Child layers
-          </label>
-          <select id="childLayersSelect" className="custom-select mr-sm-2">
-            <option value="1">Option 1</option>
-          </select> */}
+          </div>
 
           <div className="form-row">
             <div className="col-md-6">

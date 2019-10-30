@@ -1,21 +1,27 @@
 import React from "react";
 
-function GetChildLayersList({ childLayers }) {
+function GetChildLayersList({
+  childLayersBuffer,
+  isShowedChildLayersSelectContainer
+}) {
   // console.log("childLayers: ", childLayers);
-  const childLayersList = childLayers.map((item, index) => {
+  const childLayersList = childLayersBuffer.map((item, index) => {
     return (
-      <option key={item.id} data-index={index}>
+      <option key={item.id} data-index={index} value={index}>
         {item.name}
       </option>
     );
   });
   return (
-    <div>
-      <label htmlFor="childLayersSelect" className="col-form-label">
+    <div
+      className="childLayersSelectContainer"
+      hidden={isShowedChildLayersSelectContainer}
+    >
+      {/* <label htmlFor="childLayersSelect" className="col-form-label">
         Child layers
-      </label>
+      </label> */}
       <select
-        name="childLayersSelect"
+        data-name="childLayerSelect"
         id="childLayersSelect"
         className="custom-select mr-sm-2"
       >
