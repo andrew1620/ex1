@@ -1,0 +1,9 @@
+.whoseProps .active {
+  color: #117dff;
+}
+
+.whoseProps > div:hover {
+  color: #117dff;
+  /* color: #a2ccff; */
+  transition: 0.3s all;
+}

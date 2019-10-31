@@ -7,7 +7,7 @@ function GetChildLayersList({
   // console.log("childLayers: ", childLayers);
   const childLayersList = childLayersBuffer.map((item, index) => {
     return (
-      <option key={item.id} data-index={index} value={index}>
+      <option key={item.id} data-index={index} value={index} data-id={item.id}>
         {item.name}
       </option>
     );
@@ -15,15 +15,14 @@ function GetChildLayersList({
   return (
     <div
       className="childLayersSelectContainer"
-      hidden={isShowedChildLayersSelectContainer}
+      // style={{ maxWidth: "520px" }}
+      // hidden={isShowedChildLayersSelectContainer}
     >
-      {/* <label htmlFor="childLayersSelect" className="col-form-label">
-        Child layers
-      </label> */}
       <select
         data-name="childLayerSelect"
         id="childLayersSelect"
         className="custom-select mr-sm-2"
+        // style={{ width: "100%" }}
       >
         {childLayersList}
       </select>
