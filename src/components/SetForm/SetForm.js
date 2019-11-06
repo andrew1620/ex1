@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import IdList from "../idList/idList";
-import GetChildLayersList from "../getChildLayersList/GetChildLayersList";
 import InitialLayerProps from "../InitialLayerProps/InitialLayerProps";
 import ChildLayerProps from "../ChildLayerProps/ChildLayerProps";
 import "./style.css";
@@ -14,19 +13,15 @@ export default function SetForm({
   setIsShowedProperties,
   setAreShowedOutputAreas,
   childLayersBuffer,
-  showChildLayersSelect,
-  addChildLayer,
-  isShowedChildLayersSelectContainer,
-  setIsShowedChildLayersSelectContainer,
-  isShowedAddChildLayerContainer,
-  setIsShowedAddChildLayerContainer,
   isHiddenSelectLayer,
   isHiddenAddLayerContainer,
   setIsHiddenAddLayerContainer,
   setIsHiddenSelectLayer,
-  setIsCreatingChildLayer,
   creatingChildLayer,
-  btnSaveChildLayer
+  btnSaveChildLayer,
+  addChildLayerInputValue,
+  setAddChildLayerInputValue,
+  addChildLayerInputStyle
 }) {
   const formStyle = {
     border: "3px solid #eee",
@@ -49,9 +44,6 @@ export default function SetForm({
     width: "100%",
     textAlign: "center",
     cursor: "pointer"
-  };
-  const activeWhosePropsBtn = {
-    color: "#117DFF"
   };
 
   const showSetForm = () => {
@@ -76,7 +68,6 @@ export default function SetForm({
     event.target.parentElement
       .querySelector(".btnChildLayer")
       .classList.remove("active");
-    // console.log(whosePropsChosen);
   };
   const chooseChildLayer = event => {
     setWhosePropsChosen(false);
@@ -85,8 +76,9 @@ export default function SetForm({
     event.target.parentElement
       .querySelector(".btnInitialLayer")
       .classList.remove("active");
-    // console.log(whosePropsChosen);
   };
+  const [shouldAddChildLayer, setShouldAddChildLayer] = useState(false);
+
   return (
     <form className="container" style={formStyle} onBlur={saveChanges}>
       <label htmlFor="layerSel" className="col-form-label">
@@ -151,20 +143,20 @@ export default function SetForm({
 
           {whosePropsChosen ? (
             <InitialLayerProps
-              isShowedAddChildLayerContainer={isShowedAddChildLayerContainer}
-              setIsCreatingChildLayer={setIsCreatingChildLayer}
-              addChildLayer={addChildLayer}
               showFillProperty={showFillProperty}
               btnSendClick={btnSendClick}
             />
           ) : (
             <ChildLayerProps
-              isShowedChildLayersSelectContainer={
-                isShowedChildLayersSelectContainer
-              }
               childLayersBuffer={childLayersBuffer}
               whosePropsChosen={whosePropsChosen}
+              showFillProperty={showFillProperty}
               btnSaveChildLayer={btnSaveChildLayer}
+              shouldAddChildLayer={shouldAddChildLayer}
+              setShouldAddChildLayer={setShouldAddChildLayer}
+              addChildLayerInputValue={addChildLayerInputValue}
+              setAddChildLayerInputValue={setAddChildLayerInputValue}
+              addChildLayerInputStyle={addChildLayerInputStyle}
             />
           )}
         </div>

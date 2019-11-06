@@ -1,0 +1,13 @@
+.childLayerProperties,
+.initialLayerProperties {
+  border: 3px dashed #eee;
+  padding: 0 10px 10px 10px;
+  box-sizing: border-box;
+}
+.tooltipLayer {
+  text-align: center;
+  margin: 0 0 10px 0;
+  font-family: Arial;
+  font-style: italic;
+  color: #212529;
+}

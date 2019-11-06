@@ -31,10 +31,10 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
   const [isShowedProperties, setIsShowedProperties] = useState(false);
   const [areShowedOutputAreas, setAreShowedOutputAreas] = useState(false);
   const [childLayersBuffer, setChildLayersBuffer] = useState([]);
-  const [isCreatingChildLayer, setIsCreatingChildLayer] = useState(false); //состояние редактируем основной слой или потомок
   const [workingWithChildLayer, setWorkingWithChildLayer] = useState(false);
   const [requiredChildLayer, setRequiredChildLayer] = useState({});
-  const [newChildLayer, setNewChildLayer] = useState({});
+  const [addChildLayerInputValue, setAddChildLayerInputValue] = useState("");
+  const [addChildLayerInputStyle, setAddChildLayerInputStyle] = useState({});
 
   const creatingChildLayer = e => {
     if (e.target.className === "btnInitialLayer") {
@@ -52,7 +52,6 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
       event.target.dataset.name === "btnSend" ||
       event.target.dataset.name === "createLayerRef" ||
       event.target.dataset.name === "btnCancel" ||
-      // event.target.dataset.name === "childLayerSelect" ||
       event.target.dataset.name === "amountChildLayersHref"
     ) {
       event.preventDefault();
@@ -70,6 +69,7 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
 
         if (layer.childLayers.length !== 0)
           setChildLayersBuffer(layer.childLayers);
+        else setChildLayersBuffer([]);
       }
       // console.log(layer);
       getRequredLayer();
@@ -90,6 +90,7 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
     }
 
     if (event.target.dataset.name === "childLayerSelect") {
+      //Доделать запрос слоя потомка в селект, можно запрашивать и изменять через основной слой
       fetch(
         `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
       )
@@ -110,6 +111,11 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
       return;
     }
 
+    //Проверка на пустое поле addChildLayerInput
+    if (addChildLayerInputValue === "" && workingWithChildLayer) {
+      setAddChildLayerInputStyle({ outline: "1px solid red" });
+      return;
+    }
     //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.style
     const objectsBuffer = workingWithChildLayer
       ? Object.assign({}, requiredChildLayer.objects)
@@ -150,36 +156,6 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
     showObj();
   };
 
-  //состояние селекта childLayers
-  const [
-    isShowedChildLayersSelectContainer,
-    setIsShowedChildLayersSelectContainer
-  ] = useState(true);
-  //состояние инпута и кнопки добавления childLayer
-  const [
-    isShowedAddChildLayerContainer,
-    setIsShowedAddChildLayerContainer
-  ] = useState(true);
-
-  const showChildLayersSelect = () => {
-    if (childLayersBuffer.length !== 0)
-      setIsShowedChildLayersSelectContainer(
-        !isShowedChildLayersSelectContainer
-      );
-    else setIsShowedAddChildLayerContainer(!isShowedAddChildLayerContainer);
-  };
-
-  const addChildLayer = event => {
-    setChildLayersBuffer([
-      ...childLayersBuffer,
-      {
-        id: Math.random(),
-        name: event.target.previousElementSibling.value,
-        objects: {}
-      }
-    ]);
-  };
-
   //Ф-ия вывода свойств набранного объекта справа в рамке
   const showObj = () => {
     let strObjects = "";
@@ -196,7 +172,7 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
         {strObjects}
         <p>
           <b>name:</b> {requiredChildLayer.name}, <b>id:</b>{" "}
-          {requiredChildLayer.id},<b>objects:</b> {strChildObjects}
+          {requiredChildLayer.id}, <b>objects:</b> {strChildObjects}
         </p>
       </p>
     );
@@ -218,11 +194,11 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
     event.preventDefault();
     let sendMethod, url;
     if (layer.id === "userId") {
-      sendMethod = "PUT";
+      sendMethod = "POST";
       url = "http://localhost:3000/layers/configs";
     } else {
       //надо добавить разрешение на запрос изменения данных на сервере
-      sendMethod = "PUSH";
+      sendMethod = "PUT";
       url = `http://localhost:3000/layers/configs/${layer.id}`;
     }
 
@@ -275,28 +251,21 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
         areShowedOutputAreas={areShowedOutputAreas}
         setAreShowedOutputAreas={setAreShowedOutputAreas}
         childLayersBuffer={childLayersBuffer}
-        showChildLayersSelect={showChildLayersSelect}
-        addChildLayer={addChildLayer}
-        isShowedChildLayersSelectContainer={isShowedChildLayersSelectContainer}
-        setIsShowedChildLayersSelectContainer={
-          setIsShowedChildLayersSelectContainer
-        }
-        isShowedAddChildLayerContainer={isShowedAddChildLayerContainer}
-        setIsShowedAddChildLayerContainer={setIsShowedAddChildLayerContainer}
         isHiddenAddLayerContainer={isHiddenAddLayerContainer}
         isHiddenSelectLayer={isHiddenSelectLayer}
         setIsHiddenAddLayerContainer={setIsHiddenAddLayerContainer}
         setIsHiddenSelectLayer={setIsHiddenSelectLayer}
-        setIsCreatingChildLayer={setIsCreatingChildLayer}
         creatingChildLayer={creatingChildLayer}
         btnSaveChildLayer={btnSaveChildLayer}
+        addChildLayerInputValue={addChildLayerInputValue}
+        setAddChildLayerInputValue={setAddChildLayerInputValue}
+        addChildLayerInputStyle={addChildLayerInputStyle}
       />
 
       <div>
         {areShowedOutputAreas && <ShowObject p={p} />}
         {areShowedOutputAreas && <ShowFormObject layerStyle={layer.objects} />}
       </div>
-      {/* <Tooltip tooltipProps={tooltipProps} /> */}
     </div>
   );
 }

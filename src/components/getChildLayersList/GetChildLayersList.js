@@ -1,10 +1,6 @@
 import React from "react";
-
-function GetChildLayersList({
-  childLayersBuffer,
-  isShowedChildLayersSelectContainer
-}) {
-  // console.log("childLayers: ", childLayers);
+/*shouldAddChildLayer,*/
+function GetChildLayersList({ childLayersBuffer, shouldAddChildLayer }) {
   const childLayersList = childLayersBuffer.map((item, index) => {
     return (
       <option key={item.id} data-index={index} value={index} data-id={item.id}>
@@ -13,16 +9,12 @@ function GetChildLayersList({
     );
   });
   return (
-    <div
-      className="childLayersSelectContainer"
-      // style={{ maxWidth: "520px" }}
-      // hidden={isShowedChildLayersSelectContainer}
-    >
+    <div className="childLayersSelectContainer">
       <select
         data-name="childLayerSelect"
         id="childLayersSelect"
         className="custom-select mr-sm-2"
-        // style={{ width: "100%" }}
+        hidden={shouldAddChildLayer}
       >
         {childLayersList}
       </select>

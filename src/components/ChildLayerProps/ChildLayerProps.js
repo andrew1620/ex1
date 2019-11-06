@@ -1,60 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import GetChildLayersList from "../getChildLayersList/GetChildLayersList";
-
-const divAddLayerStyle = {
-  display: "flex"
-};
+import "./style.css";
 
 const ChildLayerProps = ({
-  isShowedAddChildLayerContainer,
   setIsCreatingChildLayer,
-  addChildLayer,
   showFillProperty,
-  btnSendClick,
   childLayersBuffer,
-  isShowedChildLayersSelectContainer,
-  btnSaveChildLayer
+  btnSaveChildLayer,
+  shouldAddChildLayer,
+  setShouldAddChildLayer,
+  addChildLayerInputValue,
+  setAddChildLayerInputValue,
+  addChildLayerInputStyle
 }) => {
-  const [isHiddenAddChildLayer, setIsHiddenAddChildLayer] = useState(true);
-
-  const createChildLayer = event => {
-    event.preventDefault();
-    setIsHiddenAddChildLayer(false);
+  setShouldAddChildLayer(childLayersBuffer.length === 0 ? true : false);
+  const getAddChildLayerInput = event => {
+    setAddChildLayerInputValue(event.target.value);
   };
+  const childLayerBtn = () => {};
 
   return (
-    <div className="showSetProperties">
+    <div className="childLayerProperties">
+      <div className="tooltipLayer">Вы работаете с child layer</div>
       <div className="addChildLayerContainer form-row">
         <div className="col-md-10">
+          <input
+            type="text"
+            id="addChildLayerInput"
+            className="form-control addChildLayerInput"
+            data-name="addChildLayerInput"
+            placeholder="Введите название child layer"
+            onClick={setIsCreatingChildLayer}
+            hidden={!shouldAddChildLayer}
+            value={addChildLayerInputValue}
+            onChange={getAddChildLayerInput}
+            style={addChildLayerInputStyle}
+          />
           <GetChildLayersList
             childLayersBuffer={childLayersBuffer}
-            isShowedChildLayersSelectContainer={
-              isShowedChildLayersSelectContainer
-            }
+            shouldAddChildLayer={shouldAddChildLayer}
           />
         </div>
         <div className="col-md-2">
           <button
             className="btn btn-primary btnAddChildLayer"
             data-name="btnAddChildLayer"
-            onBlur={addChildLayer}
-            onClick={createChildLayer}
+            onClick={childLayerBtn}
           >
-            Добавить
+            {shouldAddChildLayer ? "Отменить" : "Добавить"}
           </button>
         </div>
       </div>
-      <input
-        type="text"
-        id="addChildLayerInput"
-        className="form-control"
-        data-name="addChildLayerInput"
-        placeholder="Введите название child layer"
-        data-tooltip="qqqqq"
-        // style={{ maxWidth: "570px" }}
-        onClick={setIsCreatingChildLayer}
-        // hidden={isHiddenAddChildLayer}
-      />
 
       <div className="form-row">
         <div className="col-md-6">

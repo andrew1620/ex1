@@ -6,15 +6,10 @@ const divAddLayerStyle = {
   justifyContent: "space-between"
 };
 
-const InitialLayerProps = ({
-  isShowedAddChildLayerContainer,
-  setIsCreatingChildLayer,
-  addChildLayer,
-  showFillProperty,
-  btnSendClick
-}) => {
+const InitialLayerProps = ({ showFillProperty, btnSendClick }) => {
   return (
-    <div className="showSetProperties">
+    <div className="initialLayerProperties">
+      <div className="tooltipLayer">Вы работаете с initial layer</div>
       <div className="form-row">
         <div className="col-md-6">
           <label htmlFor="form" className="col-form-label">
