@@ -9,7 +9,7 @@ const divAddLayerStyle = {
 const InitialLayerProps = ({ showFillProperty, btnSendClick }) => {
   return (
     <div className="initialLayerProperties">
-      <div className="tooltipLayer">Вы работаете с initial layer</div>
+      {/* <div className="tooltipLayer">Вы работаете с initial layer</div> */}
       <div className="form-row">
         <div className="col-md-6">
           <label htmlFor="form" className="col-form-label">

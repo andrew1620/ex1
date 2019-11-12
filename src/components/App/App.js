@@ -5,7 +5,7 @@ import ShowObject from "../ShowObject/ShowObject";
 import ShowFormObject from "../ShowFormObject/ShowFormObject";
 import { connect } from "react-redux";
 
-function App({ layersArr, onAddLayer, onGetLayersArr }) {
+function App({ onGetLayersArr, layer, onUpdateLayer }) {
   const [isFetchCalled, setIsFetchCalled] = useState(false); // Состояние уже загруженных слоев, если нет то загрузить если да то не надо, инче появлялся постоянный рендер слоев
   const url = "http://localhost:3000/layers";
   if (!isFetchCalled) {
@@ -13,37 +13,33 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
       .then(response => response.json())
       .then(layersArr => onGetLayersArr(layersArr))
       .catch(err => alert("Ошибка загрузки слоев " + err));
-    setIsFetchCalled(true);
+    setIsFetchCalled(true); // ф-ия остановки постоянного запроса данных
   }
-
-  const [layer, setLayer] = useState({}); //Состояние слоя: готовый слой со стилями
-
-  const addLayer = event => {
-    event.preventDefault();
-    onAddLayer({
-      name: event.target.previousSibling.value,
-      id: "userId",
-      childLayers: []
-    });
-  };
 
   const [p, setP] = useState(<p></p>); //Состояние абзаца, в котором выводится объект для просмотра
   const [isShowedProperties, setIsShowedProperties] = useState(false);
   const [areShowedOutputAreas, setAreShowedOutputAreas] = useState(false);
-  const [childLayersBuffer, setChildLayersBuffer] = useState([]);
   const [workingWithChildLayer, setWorkingWithChildLayer] = useState(false);
   const [requiredChildLayer, setRequiredChildLayer] = useState({});
   const [addChildLayerInputValue, setAddChildLayerInputValue] = useState("");
   const [addChildLayerInputStyle, setAddChildLayerInputStyle] = useState({});
+  const [shouldAddChildLayer, setShouldAddChildLayer] = useState(false);
 
-  const creatingChildLayer = e => {
-    if (e.target.className === "btnInitialLayer") {
+  const creatingChildLayer = event => {
+    if (event.target.classList.contains("btnInitialLayer")) {
       setWorkingWithChildLayer(false);
-      console.log(workingWithChildLayer);
-    } else if (e.target.className === "btnChildLayer") {
+      // console.log(
+      //   "from creating Layer---workingwith childLayer: ",
+      //   workingWithChildLayer
+      // );
+    } else if (event.target.classList.contains("btnChildLayer")) {
       setWorkingWithChildLayer(true);
-      console.log(workingWithChildLayer);
-    } else return;
+      // console.log(
+      //   "from creating Layer---workingwith childLayer: ",
+      //   workingWithChildLayer
+      // );
+    }
+    return;
   };
 
   const saveChanges = event => {
@@ -59,46 +55,52 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
     }
     //Отслеживание нажатия на селект выбора слоя
     if (event.target.dataset.name === "layerSel") {
-      let requiredLayer;
-      async function getRequredLayer() {
-        let response = await fetch(
-          `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
-        );
-        requiredLayer = await response.json();
-        Object.assign(layer, requiredLayer);
+      try {
+        getRequredLayer();
 
-        if (layer.childLayers.length !== 0)
-          setChildLayersBuffer(layer.childLayers);
-        else setChildLayersBuffer([]);
+        async function getRequredLayer() {
+          let response = await fetch(
+            `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
+          );
+          let requiredLayer = await response.json();
+          onUpdateLayer(requiredLayer);
+
+          showObj();
+          setAreShowedOutputAreas(true);
+          // console.log("from layerSel - layer---", layer);
+        }
+      } catch (err) {
+        alert("Произошла ошибка: ", err);
       }
-      // console.log(layer);
-      getRequredLayer();
       return;
     }
 
     if (event.target.dataset.name === "addLayerInput") {
       setIsShowedProperties(true);
-      setLayer(
-        Object.assign(layer, {
-          name: event.target.value,
-          id: "userId",
-          childLayers: [],
-          objects: {}
-        })
-      );
+      onUpdateLayer({
+        name: event.target.value,
+        id: "userId",
+        childLayers: [],
+        objects: {}
+      });
       return;
     }
 
     if (event.target.dataset.name === "childLayerSelect") {
-      //Доделать запрос слоя потомка в селект, можно запрашивать и изменять через основной слой
-      fetch(
-        `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
-      )
-        .then(response => response.json())
-        .then(childLayer =>
-          setRequiredChildLayer(Object.assign({}, childLayer))
-        )
-        .catch(err => alert("Произошла ошибка: " + err));
+      // fetch(
+      //   `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
+      // )
+      //   .then(response => response.json())
+      //   .then(childLayer =>
+      //     setRequiredChildLayer(Object.assign({}, childLayer))
+      //   )
+      //   .catch(err => alert("Произошла ошибка: " + err));
+      // return;
+
+      // Временно, пока не настроен сервер
+      const index = event.target.value;
+      setRequiredChildLayer(Object.assign(layer.childLayers[index]));
+      // console.log("from childLayerSelect---", requiredChildLayer);
       return;
     }
 
@@ -112,15 +114,22 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
     }
 
     //Проверка на пустое поле addChildLayerInput
-    if (addChildLayerInputValue === "" && workingWithChildLayer) {
+    if (
+      addChildLayerInputValue === "" &&
+      workingWithChildLayer &&
+      shouldAddChildLayer
+    ) {
       setAddChildLayerInputStyle({ outline: "1px solid red" });
       return;
+    } else {
+      setAddChildLayerInputStyle({ outline: "none" });
     }
-    //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.style
+
+    //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.objects
     const objectsBuffer = workingWithChildLayer
       ? Object.assign({}, requiredChildLayer.objects)
       : Object.assign({}, layer.objects);
-    // console.log("objectBuffer ------", objectsBuffer);
+
     //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
     if (event.target.type === "checkbox") {
       objectsBuffer[event.target.dataset.property] = event.target.checked;
@@ -143,47 +152,92 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
         : (objectsBuffer[event.target.dataset.property] = event.target.value);
     } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
     //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
-    if ("" in objectsBuffer) delete objectsBuffer[""];
+    if ("" in objectsBuffer || "undefined" in objectsBuffer) {
+      delete objectsBuffer[""];
+      delete objectsBuffer["undefined"];
+    }
     //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
-    workingWithChildLayer
-      ? setRequiredChildLayer(
-          Object.assign(requiredChildLayer, { objects: objectsBuffer })
-        )
-      : setLayer(Object.assign(layer, { objects: objectsBuffer }));
-
+    if (workingWithChildLayer) {
+      setRequiredChildLayer(
+        Object.assign(requiredChildLayer, { objects: objectsBuffer })
+      );
+    } else {
+      onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
+    }
     setAreShowedOutputAreas(true);
+
     // вызов ф-ии вывода готового абзаца в showObject
     showObj();
+    // console.log("конец saveChanges");
   };
 
   //Ф-ия вывода свойств набранного объекта справа в рамке
   const showObj = () => {
     let strObjects = "";
-    let strChildObjects = "";
     for (let key in layer.objects) {
       strObjects += ` ${key}: ${layer.objects[key]}, `;
     }
-    for (let key in requiredChildLayer.objects) {
-      strChildObjects += `${key}: ${requiredChildLayer.objects[key]},`;
-    }
+    const pList = layer.childLayers.map(item => {
+      let strChildObjects = "";
+      for (let key in item.objects) {
+        strChildObjects += ` ${key}: ${item.objects[key]}, `;
+      }
+      return (
+        <p key={Date().now}>
+          <b>name:</b> {item.name}, <b>id:</b> {item.id}, <b>objects:</b>{" "}
+          {strChildObjects}
+        </p>
+      );
+    });
     setP(
       <p style={{ fontFamily: "Arial" }}>
-        <b>name:</b> {layer.name}, <b>id:</b> {layer.id},<b>objects:</b>{" "}
+        <div style={{ textAlign: "center", margin: 0 }}>Intial layer</div>
+        <hr style={{ margin: 0 }} />
+        <b>name:</b> {layer.name}, <b>id:</b> {layer.id}, <b>objects:</b>{" "}
         {strObjects}
-        <p>
-          <b>name:</b> {requiredChildLayer.name}, <b>id:</b>{" "}
-          {requiredChildLayer.id}, <b>objects:</b> {strChildObjects}
-        </p>
+        {layer.childLayers.length !== 0 && (
+          <div style={{ textAlign: "center", margin: "15px 0 0 0" }}>
+            Child layers
+            <hr style={{ margin: 0 }} />
+          </div>
+        )}
+        {pList}
       </p>
     );
   };
 
   const btnSaveChildLayer = event => {
-    event.preventDefault();
-    setChildLayersBuffer([...childLayersBuffer, requiredChildLayer]);
-    console.log("---", childLayersBuffer);
-    setLayer(Object.assign(layer, { childLayers: childLayersBuffer }));
-    console.log(layer);
+    if (event.target.tagName === "BUTTON") event.preventDefault();
+
+    //Проверка на пустой childLayer
+    if (Object.keys(requiredChildLayer.objects).length === 0) return;
+    checkSameChildLayer();
+    onUpdateLayer(
+      Object.assign(layer, {
+        childLayers: [...layer.childLayers, requiredChildLayer]
+      })
+    );
+    setWorkingWithChildLayer(false);
+    document.querySelector(".btnChildLayer").classList.remove("active");
+    document.querySelector(".btnInitialLayer").classList.add("active");
+
+    //ф-ия проверки одинаковых childLayers
+    function checkSameChildLayer() {
+      const childLayersArr = layer.childLayers;
+      let index = "initial";
+      for (let i = 0; i < childLayersArr.length; i++) {
+        if (childLayersArr[i].name === requiredChildLayer.name) {
+          index = i;
+          break;
+        }
+      }
+      if (index !== "initial") {
+        childLayersArr.splice(index, 1);
+        onUpdateLayer(Object.assign(layer, { childLayers: childLayersArr }));
+      } else return;
+    }
+
+    // console.log("from btnSaveChildLayer - layer--- ", layer);
   };
 
   const [isHiddenAddLayerContainer, setIsHiddenAddLayerContainer] = useState(
@@ -235,22 +289,18 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
       style={{
         margin: "10px auto",
         display: "flex",
-        // flexWrap: "wrap",
         justifyContent: "center",
         width: "70%"
       }}
     >
       <SetForm
-        layersArr={layersArr}
         saveChanges={saveChanges}
         btnSendClick={btnSendClick}
-        addLayer={addLayer}
         showFillProperty={showFillProperty}
         setIsShowedProperties={setIsShowedProperties}
         isShowedProperties={isShowedProperties}
         areShowedOutputAreas={areShowedOutputAreas}
         setAreShowedOutputAreas={setAreShowedOutputAreas}
-        childLayersBuffer={childLayersBuffer}
         isHiddenAddLayerContainer={isHiddenAddLayerContainer}
         isHiddenSelectLayer={isHiddenSelectLayer}
         setIsHiddenAddLayerContainer={setIsHiddenAddLayerContainer}
@@ -260,6 +310,10 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
         addChildLayerInputValue={addChildLayerInputValue}
         setAddChildLayerInputValue={setAddChildLayerInputValue}
         addChildLayerInputStyle={addChildLayerInputStyle}
+        shouldAddChildLayer={shouldAddChildLayer}
+        setShouldAddChildLayer={setShouldAddChildLayer}
+        workingWithChildLayer={workingWithChildLayer}
+        setWorkingWithChildLayer={setWorkingWithChildLayer}
       />
 
       <div>
@@ -272,14 +326,16 @@ function App({ layersArr, onAddLayer, onGetLayersArr }) {
 
 export default connect(
   state => ({
-    layersArr: state.layers
+    layersArr: state.layers,
+    layer: state.layer,
+    childLayersBuffer1: state.childLayersBuffer
   }),
   dispatch => ({
     onGetLayersArr(layersArr) {
       dispatch({ type: "GET_LAYERS", payload: layersArr });
     },
-    onAddLayer(layer) {
-      dispatch({ type: "ADD_LAYER", payload: layer });
+    onUpdateLayer(layer) {
+      dispatch({ type: "UPDATE_LAYER", payload: layer });
     }
   })
 )(App);

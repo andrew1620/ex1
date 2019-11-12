@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import GetChildLayersList from "../getChildLayersList/GetChildLayersList";
 import "./style.css";
+import { connect } from "react-redux";
 
 const ChildLayerProps = ({
+  layer = {},
   setIsCreatingChildLayer,
   showFillProperty,
-  childLayersBuffer,
   btnSaveChildLayer,
   shouldAddChildLayer,
   setShouldAddChildLayer,
@@ -13,15 +14,16 @@ const ChildLayerProps = ({
   setAddChildLayerInputValue,
   addChildLayerInputStyle
 }) => {
-  setShouldAddChildLayer(childLayersBuffer.length === 0 ? true : false);
   const getAddChildLayerInput = event => {
     setAddChildLayerInputValue(event.target.value);
   };
-  const childLayerBtn = () => {};
+  const childLayerBtn = event => {
+    event.preventDefault();
+    setShouldAddChildLayer(!shouldAddChildLayer);
+  };
 
   return (
     <div className="childLayerProperties">
-      <div className="tooltipLayer">Вы работаете с child layer</div>
       <div className="addChildLayerContainer form-row">
         <div className="col-md-10">
           <input
@@ -36,10 +38,7 @@ const ChildLayerProps = ({
             onChange={getAddChildLayerInput}
             style={addChildLayerInputStyle}
           />
-          <GetChildLayersList
-            childLayersBuffer={childLayersBuffer}
-            shouldAddChildLayer={shouldAddChildLayer}
-          />
+          <GetChildLayersList shouldAddChildLayer={shouldAddChildLayer} />
         </div>
         <div className="col-md-2">
           <button
@@ -195,11 +194,7 @@ const ChildLayerProps = ({
       </div>
       <div className="form-row" data-name="qqq">
         <div className="col-md-6" onClick={showFillProperty}>
-          <label
-            htmlFor="fill"
-            className="form-check-label"
-            // onClick={showFillPropery}
-          >
+          <label htmlFor="fill" className="form-check-label">
             fill
           </label>
           <input
@@ -208,7 +203,6 @@ const ChildLayerProps = ({
             type="checkbox"
             className="form-check-input"
             style={{ marginLeft: "7px" }}
-            // onClick={showFillPropery}
           />
         </div>
       </div>
@@ -268,4 +262,9 @@ const ChildLayerProps = ({
   );
 };
 
-export default ChildLayerProps;
+export default connect(
+  state => ({
+    layer: state.layer
+  }),
+  dispatch => ({})
+)(ChildLayerProps);

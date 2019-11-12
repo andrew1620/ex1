@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 
 function IdList({ layersArr = [], showSetForm, isHiddenSelectLayer }) {
   // console.log("from Idlist ", layersArr);
@@ -27,4 +28,9 @@ function IdList({ layersArr = [], showSetForm, isHiddenSelectLayer }) {
     </select>
   );
 }
-export default IdList;
+export default connect(
+  state => ({
+    layersArr: state.layers
+  }),
+  dispath => ({})
+)(IdList);

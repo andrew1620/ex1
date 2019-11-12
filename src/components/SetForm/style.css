@@ -1,9 +1,48 @@
+.container {
+  border: 3px solid #eee;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  /* borderRadius: 15px; */
+  width: 700px;
+  margin: 0;
+}
+.addLayerContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.btnChildLayer,
+.btnInitialLayer {
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+}
+.underSelectLayer {
+  position: relative;
+}
+.whoseProps {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: -24px; /*Допилить определение позиции в зависимости от размера экрана */
+  /* outline: 1px solid red; */
+  color: rgb(153, 153, 153);
+}
 .whoseProps .active {
-  color: #117dff;
+  color: black;
+  border: 1px solid #eee;
+  border-bottom: none;
+  border-radius: 10px 10px 0px 0;
+  background: white;
+  z-index: 100;
 }
 
 .whoseProps > div:hover {
-  color: #117dff;
+  color: black;
   /* color: #a2ccff; */
-  transition: 0.3s all;
+  /* transition: 0.3s all; */
+}
+.props {
+  margin-top: 35px;
 }

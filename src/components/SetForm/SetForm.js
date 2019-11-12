@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import IdList from "../idList/idList";
 import InitialLayerProps from "../InitialLayerProps/InitialLayerProps";
 import ChildLayerProps from "../ChildLayerProps/ChildLayerProps";
 import "./style.css";
+import { connect } from "react-redux";
 
-export default function SetForm({
-  layersArr,
+function SetForm({
+  layer = [],
   saveChanges,
   btnSendClick,
   showFillProperty,
   isShowedProperties,
   setIsShowedProperties,
   setAreShowedOutputAreas,
-  childLayersBuffer,
   isHiddenSelectLayer,
   isHiddenAddLayerContainer,
   setIsHiddenAddLayerContainer,
@@ -21,38 +21,27 @@ export default function SetForm({
   btnSaveChildLayer,
   addChildLayerInputValue,
   setAddChildLayerInputValue,
-  addChildLayerInputStyle
+  addChildLayerInputStyle,
+  shouldAddChildLayer,
+  setShouldAddChildLayer,
+  workingWithChildLayer,
+  setWorkingWithChildLayer
 }) {
-  const formStyle = {
-    border: "3px solid #eee",
-    padding: "5px 10px",
-    boxSizing: "border-box",
-    borderRadius: "15px",
-    width: "700px",
-    margin: "0"
-  };
-  const divAddLayerStyle = {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-between"
-  };
-  const whosePropsStyle = {
-    display: "flex",
-    justifyContent: "space-between"
-  };
-  const whosePropsBtnsStyle = {
-    width: "100%",
-    textAlign: "center",
-    cursor: "pointer"
-  };
-
   const showSetForm = () => {
     setIsShowedProperties(true);
+    //эта херь для обновления кол-ва слоев на кнопке child layers (), пока не придумал как иначе обновить
+    setTimeout(() => {
+      setIsShowedProperties(false);
+      setIsShowedProperties(true);
+    }, 900);
   };
 
   const pressCreateLayer = () => {
     setIsHiddenAddLayerContainer(false);
     setIsHiddenSelectLayer(true);
+    setAreShowedOutputAreas(false);
+    setIsShowedProperties(false);
+    setIsShowedProperties(false);
   };
   const cancelAddLayer = () => {
     setIsHiddenAddLayerContainer(true);
@@ -60,27 +49,25 @@ export default function SetForm({
     setAreShowedOutputAreas(false);
     setIsShowedProperties(false);
   };
-  const [whosePropsChosen, setWhosePropsChosen] = useState(true);
+
   const chooseInitialLayer = event => {
-    setWhosePropsChosen(true);
-    creatingChildLayer(event);
+    setWorkingWithChildLayer(false);
     event.target.classList.add("active");
     event.target.parentElement
       .querySelector(".btnChildLayer")
       .classList.remove("active");
   };
   const chooseChildLayer = event => {
-    setWhosePropsChosen(false);
-    creatingChildLayer(event);
+    setWorkingWithChildLayer(true);
     event.target.classList.add("active");
     event.target.parentElement
       .querySelector(".btnInitialLayer")
       .classList.remove("active");
+    setShouldAddChildLayer(layer.childLayers.length === 0 ? true : false);
   };
-  const [shouldAddChildLayer, setShouldAddChildLayer] = useState(false);
 
   return (
-    <form className="container" style={formStyle} onBlur={saveChanges}>
+    <form className="container" onBlur={saveChanges}>
       <label htmlFor="layerSel" className="col-form-label">
         Выберите слой или{" "}
         <a
@@ -93,15 +80,10 @@ export default function SetForm({
         </a>
       </label>
       <IdList
-        layersArr={layersArr}
         showSetForm={showSetForm}
         isHiddenSelectLayer={isHiddenSelectLayer}
       />
-      <div
-        style={divAddLayerStyle}
-        className="addLayerContainer"
-        hidden={isHiddenAddLayerContainer}
-      >
+      <div className="addLayerContainer" hidden={isHiddenAddLayerContainer}>
         <input
           type="text"
           id="addLayerInput"
@@ -122,45 +104,46 @@ export default function SetForm({
       </div>
 
       {isShowedProperties && (
-        <div>
-          <div className="whoseProps" style={whosePropsStyle}>
+        <div className="underSelectLayer">
+          <div className="whoseProps" onMouseDown={creatingChildLayer}>
             <div
               className="btnInitialLayer active"
-              style={whosePropsBtnsStyle}
               onClick={chooseInitialLayer}
             >
               initial layer
             </div>
-            <span style={{ color: "#eee" }}>|</span>
-            <div
-              className="btnChildLayer"
-              style={whosePropsBtnsStyle}
-              onClick={chooseChildLayer}
-            >
-              child layers ({childLayersBuffer.length})
+            <div className="btnChildLayer" onClick={chooseChildLayer}>
+              child layers ({layer.childLayers ? layer.childLayers.length : 0})
             </div>
           </div>
 
-          {whosePropsChosen ? (
-            <InitialLayerProps
-              showFillProperty={showFillProperty}
-              btnSendClick={btnSendClick}
-            />
-          ) : (
-            <ChildLayerProps
-              childLayersBuffer={childLayersBuffer}
-              whosePropsChosen={whosePropsChosen}
-              showFillProperty={showFillProperty}
-              btnSaveChildLayer={btnSaveChildLayer}
-              shouldAddChildLayer={shouldAddChildLayer}
-              setShouldAddChildLayer={setShouldAddChildLayer}
-              addChildLayerInputValue={addChildLayerInputValue}
-              setAddChildLayerInputValue={setAddChildLayerInputValue}
-              addChildLayerInputStyle={addChildLayerInputStyle}
-            />
-          )}
+          <div className="props">
+            {!workingWithChildLayer ? (
+              <InitialLayerProps
+                showFillProperty={showFillProperty}
+                btnSendClick={btnSendClick}
+              />
+            ) : (
+              <ChildLayerProps
+                showFillProperty={showFillProperty}
+                btnSaveChildLayer={btnSaveChildLayer}
+                shouldAddChildLayer={shouldAddChildLayer}
+                setShouldAddChildLayer={setShouldAddChildLayer}
+                addChildLayerInputValue={addChildLayerInputValue}
+                setAddChildLayerInputValue={setAddChildLayerInputValue}
+                addChildLayerInputStyle={addChildLayerInputStyle}
+              />
+            )}
+          </div>
         </div>
       )}
     </form>
   );
 }
+
+export default connect(
+  state => ({
+    layer: state.layer
+  }),
+  dispatch => ({})
+)(SetForm);
