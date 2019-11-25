@@ -1,17 +1,13 @@
-import React, { useState } from "react";
-export default ({ layerStyle }) => {
-  const divStyle = {
-    height: "50%",
-    border: "3px solid #eee",
-    // borderRadius: "15px",
-    padding: "10px",
-    display: "flex",
-    boxSizing: "border-box"
-  };
+import React from "react";
+import Map from "../Map/index";
+import "./style.css";
 
+export default () => {
   return (
-    <div style={divStyle}>
-      <div></div>
+    <div className="mainDiv">
+      <div id="mapid">
+        <Map />
+      </div>
     </div>
   );
 };

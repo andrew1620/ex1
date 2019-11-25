@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import IdList from "../idList/idList";
 import InitialLayerProps from "../InitialLayerProps/InitialLayerProps";
 import ChildLayerProps from "../ChildLayerProps/ChildLayerProps";
+import LayerSettings from "../LayerSettings/index";
 import "./style.css";
 import { connect } from "react-redux";
 
@@ -30,10 +31,9 @@ function SetForm({
   const showSetForm = () => {
     setIsShowedProperties(true);
     //эта херь для обновления кол-ва слоев на кнопке child layers (), пока не придумал как иначе обновить
-    setTimeout(() => {
-      setIsShowedProperties(false);
-      setIsShowedProperties(true);
-    }, 900);
+
+    setIsShowedProperties(false);
+    setIsShowedProperties(true);
   };
 
   const pressCreateLayer = () => {
@@ -65,6 +65,19 @@ function SetForm({
       .classList.remove("active");
     setShouldAddChildLayer(layer.childLayers.length === 0 ? true : false);
   };
+  // const [whosePropsPosition, setWhosePropsPosition] = useState({});
+  // if (isShowedProperties) {
+  //   setTimeout(() => {
+  //     const propsCoords = document
+  //       .querySelector(".props")
+  //       .getBoundingClientRect();
+  //     setWhosePropsPosition({
+  //       top:
+  //         propsCoords.top - document.querySelector(".whoseProps").offsetHeight,
+  //       width: document.querySelector(".props").offsetWidth
+  //     });
+  //   }, 3000);
+  // }
 
   return (
     <form className="container" onBlur={saveChanges}>
@@ -83,6 +96,7 @@ function SetForm({
         showSetForm={showSetForm}
         isHiddenSelectLayer={isHiddenSelectLayer}
       />
+
       <div className="addLayerContainer" hidden={isHiddenAddLayerContainer}>
         <input
           type="text"
@@ -105,7 +119,12 @@ function SetForm({
 
       {isShowedProperties && (
         <div className="underSelectLayer">
-          <div className="whoseProps" onMouseDown={creatingChildLayer}>
+          <LayerSettings />
+          <div
+            className="whoseProps"
+            onMouseDown={creatingChildLayer}
+            // style={whosePropsPosition}
+          >
             <div
               className="btnInitialLayer active"
               onClick={chooseInitialLayer}

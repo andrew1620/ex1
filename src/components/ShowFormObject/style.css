@@ -1,0 +1,14 @@
+.mainDiv {
+  height: 50%;
+  width: 300px;
+  border: 3px solid #eee;
+  display: flex;
+  box-sizing: border-box;
+  overflow: auto;
+  max-width: 350px;
+  min-width: 150px;
+}
+#mapid {
+  height: 100%;
+  width: 100%;
+}

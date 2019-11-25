@@ -60,7 +60,9 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
 
         async function getRequredLayer() {
           let response = await fetch(
-            `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
+            `http://localhost:3000/layers/configs/${
+              event.target.options[event.target.value].dataset.id
+            }`
           );
           let requiredLayer = await response.json();
           onUpdateLayer(requiredLayer);
@@ -163,6 +165,7 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
       );
     } else {
       onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
+      // console.log("from endOfSaveChanges --- ", layer);
     }
     setAreShowedOutputAreas(true);
 
@@ -184,8 +187,9 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
       }
       return (
         <p key={Date().now}>
-          <b>name:</b> {item.name}, <b>id:</b> {item.id}, <b>objects:</b>{" "}
-          {strChildObjects}
+          <b>name:</b> {item.name}
+          <br /> <b>id:</b> {item.id}
+          <br /> <b>objects:</b> {strChildObjects}
         </p>
       );
     });
@@ -193,8 +197,11 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
       <p style={{ fontFamily: "Arial" }}>
         <div style={{ textAlign: "center", margin: 0 }}>Intial layer</div>
         <hr style={{ margin: 0 }} />
-        <b>name:</b> {layer.name}, <b>id:</b> {layer.id}, <b>objects:</b>{" "}
-        {strObjects}
+        <b>name:</b> {layer.name}
+        <br />
+        <b>id:</b> {layer.id}
+        <br />
+        <b>objects:</b> {strObjects}
         {layer.childLayers.length !== 0 && (
           <div style={{ textAlign: "center", margin: "15px 0 0 0" }}>
             Child layers
