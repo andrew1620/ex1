@@ -4,6 +4,7 @@ import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
 import ShowFormObject from "../ShowFormObject/ShowFormObject";
 import { connect } from "react-redux";
+import "./style.css";
 
 function App({ onGetLayersArr, layer, onUpdateLayer }) {
   const [isFetchCalled, setIsFetchCalled] = useState(false); // Состояние уже загруженных слоев, если нет то загрузить если да то не надо, инче появлялся постоянный рендер слоев
@@ -292,14 +293,7 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
   };
 
   return (
-    <div
-      style={{
-        margin: "10px auto",
-        display: "flex",
-        justifyContent: "center",
-        width: "70%"
-      }}
-    >
+    <div className="appDiv">
       <SetForm
         saveChanges={saveChanges}
         btnSendClick={btnSendClick}
@@ -323,7 +317,7 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
         setWorkingWithChildLayer={setWorkingWithChildLayer}
       />
 
-      <div>
+      <div className="outputAreas">
         {areShowedOutputAreas && <ShowObject p={p} />}
         {areShowedOutputAreas && <ShowFormObject layerStyle={layer.objects} />}
       </div>

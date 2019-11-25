@@ -3,18 +3,14 @@ import "./style.css";
 
 const GetFormElem = ({ objects }) => {
   const formElemsArr = [];
-  // let cntr = 0;
   for (let prop in objects) {
-    // if (cntr % 2 === 0 && cntr !== 0)
-    //   formElemsArr.push(<div className="w-100"></div>);
     formElemsArr.push(getElems(prop, objects[prop]));
-    // cntr++;
   }
   function getElems(key, value) {
     switch (key) {
       case "color":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -28,7 +24,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "shape":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -42,7 +38,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "weight":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -65,7 +61,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "opacity":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -86,7 +82,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "lineCap":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -97,7 +93,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "lineJoin":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -108,7 +104,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "dashArray":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>
@@ -119,7 +115,7 @@ const GetFormElem = ({ objects }) => {
         );
       case "dashOffset":
         return (
-          <div className="col">
+          <div>
             <label htmlFor={key} className="col-form-label">
               {key}
             </label>

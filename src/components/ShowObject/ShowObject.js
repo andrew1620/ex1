@@ -7,8 +7,9 @@ export default function ShowObject({ p }) {
     padding: "10px",
     boxSizing: "border-box",
     wordWrap: "break-word",
-    maxWidth: "350px",
-    minWidth: "150px",
+    // maxWidth: "350px",
+    // minWidth: "150px",
+    width: "100%",
     height: "50%",
     overflow: "auto"
   };

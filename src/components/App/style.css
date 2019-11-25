@@ -1,0 +1,21 @@
+.appDiv {
+  margin: 10px auto;
+  display: flex;
+  /* flex-wrap: wrap; */
+  justify-content: center;
+  width: 60%;
+  box-sizing: border-box;
+  /* border: 1px solid red; */
+}
+.outputAreas {
+  max-width: 100%;
+}
+@media screen and (max-width: 850px) {
+  .appDiv {
+    flex-wrap: wrap;
+  }
+  .outputAreas {
+    min-height: 500px;
+    min-width: 100%;
+  }
+}

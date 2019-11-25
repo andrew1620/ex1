@@ -5,8 +5,9 @@
   display: flex;
   box-sizing: border-box;
   overflow: auto;
-  max-width: 350px;
-  min-width: 150px;
+  /* max-width: 350px;
+  min-width: 150px; */
+  width: 100%;
 }
 #mapid {
   height: 100%;
