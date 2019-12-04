@@ -26,7 +26,12 @@ function SetForm({
   shouldAddChildLayer,
   setShouldAddChildLayer,
   workingWithChildLayer,
-  setWorkingWithChildLayer
+  setWorkingWithChildLayer,
+  handleLayerSelect,
+  handleAddLayerInput,
+  handleChildLayerSelect,
+  handleChildLayerInput,
+  collectObjects
 }) {
   const showSetForm = () => {
     setIsShowedProperties(true);
@@ -80,7 +85,7 @@ function SetForm({
   // }
 
   return (
-    <form className="container" onBlur={saveChanges}>
+    <form className="container">
       <label htmlFor="layerSel" className="col-form-label">
         Выберите слой или{" "}
         <a
@@ -95,6 +100,7 @@ function SetForm({
       <IdList
         showSetForm={showSetForm}
         isHiddenSelectLayer={isHiddenSelectLayer}
+        handleLayerSelect={handleLayerSelect}
       />
 
       <div className="addLayerContainer" hidden={isHiddenAddLayerContainer}>
@@ -104,9 +110,8 @@ function SetForm({
           className="form-control"
           data-name="addLayerInput"
           placeholder="Введите название слоя"
-          data-tooltip="qqqqq"
           style={{ maxWidth: "570px" }}
-          onChange={saveChanges}
+          onChange={handleAddLayerInput}
         />
         <button
           className="btn btn-primary cancelAddLayer"
@@ -136,7 +141,7 @@ function SetForm({
             </div>
           </div>
 
-          <div className="props">
+          <div className="props" onChange={collectObjects}>
             {!workingWithChildLayer ? (
               <InitialLayerProps
                 showFillProperty={showFillProperty}
@@ -151,6 +156,8 @@ function SetForm({
                 addChildLayerInputValue={addChildLayerInputValue}
                 setAddChildLayerInputValue={setAddChildLayerInputValue}
                 addChildLayerInputStyle={addChildLayerInputStyle}
+                handleChildLayerSelect={handleChildLayerSelect}
+                handleChildLayerInput={handleChildLayerInput}
               />
             )}
           </div>

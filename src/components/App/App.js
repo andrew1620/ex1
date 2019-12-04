@@ -26,6 +26,8 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
   const [addChildLayerInputStyle, setAddChildLayerInputStyle] = useState({});
   const [shouldAddChildLayer, setShouldAddChildLayer] = useState(false);
 
+  const [layerObjects, setLayerObjects] = useState({});
+
   const creatingChildLayer = event => {
     if (event.target.classList.contains("btnInitialLayer")) {
       setWorkingWithChildLayer(false);
@@ -43,137 +45,149 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
     return;
   };
 
-  const saveChanges = event => {
-    //Отслеживаем нажатие ненужных кнопок
-    if (
-      event.target.dataset.name === "btnSend" ||
-      event.target.dataset.name === "createLayerRef" ||
-      event.target.dataset.name === "btnCancel" ||
-      event.target.dataset.name === "amountChildLayersHref"
-    ) {
-      event.preventDefault();
-      return;
-    }
-    //Отслеживание нажатия на селект выбора слоя
-    if (event.target.dataset.name === "layerSel") {
-      try {
-        getRequredLayer();
+  //Нажатие на селект выбора слоя
+  const handleLayerSelect = event => {
+    try {
+      getRequredLayer();
+      async function getRequredLayer() {
+        let response = await fetch(
+          `http://localhost:3000/layers/configs/${
+            event.target.options[event.target.value].dataset.id
+          }`
+        );
+        let requiredLayer = await response.json();
+        onUpdateLayer(requiredLayer);
 
-        async function getRequredLayer() {
-          let response = await fetch(
-            `http://localhost:3000/layers/configs/${
-              event.target.options[event.target.value].dataset.id
-            }`
-          );
-          let requiredLayer = await response.json();
-          onUpdateLayer(requiredLayer);
-
-          showObj();
-          setAreShowedOutputAreas(true);
-          // console.log("from layerSel - layer---", layer);
-        }
-      } catch (err) {
-        alert("Произошла ошибка: ", err);
+        showObj();
+        setAreShowedOutputAreas(true);
       }
-      return;
+    } catch (err) {
+      alert("Произошла ошибка: ", err);
     }
+  };
+  const handleAddLayerInput = event => {
+    setIsShowedProperties(true);
+    onUpdateLayer({
+      name: event.target.value,
+      id: "userId",
+      childLayers: [],
+      objects: {}
+    });
+    return;
+  };
+  const handleChildLayerSelect = event => {
+    // fetch(
+    //   `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
+    // )
+    //   .then(response => response.json())
+    //   .then(childLayer =>
+    //     setRequiredChildLayer(Object.assign({}, childLayer))
+    //   )
+    //   .catch(err => alert("Произошла ошибка: " + err));
+    // return;
 
-    if (event.target.dataset.name === "addLayerInput") {
-      setIsShowedProperties(true);
-      onUpdateLayer({
-        name: event.target.value,
-        id: "userId",
-        childLayers: [],
-        objects: {}
-      });
-      return;
-    }
-
-    if (event.target.dataset.name === "childLayerSelect") {
-      // fetch(
-      //   `http://localhost:3000/layers/configs/${event.target.options[event.target.value].dataset.id}`
-      // )
-      //   .then(response => response.json())
-      //   .then(childLayer =>
-      //     setRequiredChildLayer(Object.assign({}, childLayer))
-      //   )
-      //   .catch(err => alert("Произошла ошибка: " + err));
-      // return;
-
-      // Временно, пока не настроен сервер
-      const index = event.target.value;
-      setRequiredChildLayer(Object.assign(layer.childLayers[index]));
-      // console.log("from childLayerSelect---", requiredChildLayer);
-      return;
-    }
-
-    if (event.target.dataset.name === "addChildLayerInput") {
-      setRequiredChildLayer({
-        name: event.target.value,
-        id: "userChildLayer",
-        objects: {}
-      });
-      return;
-    }
-
-    //Проверка на пустое поле addChildLayerInput
-    if (
-      addChildLayerInputValue === "" &&
-      workingWithChildLayer &&
-      shouldAddChildLayer
-    ) {
-      setAddChildLayerInputStyle({ outline: "1px solid red" });
-      return;
-    } else {
-      setAddChildLayerInputStyle({ outline: "none" });
-    }
-
-    //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.objects
-    const objectsBuffer = workingWithChildLayer
+    // Временно, пока не настроен сервер
+    const index = event.target.value;
+    setRequiredChildLayer(Object.assign(layer.childLayers[index]));
+    // console.log("from childLayerSelect---", requiredChildLayer);
+    return;
+  };
+  const handleChildLayerInput = event => {
+    setAddChildLayerInputValue(event.target.value);
+    setRequiredChildLayer({
+      name: event.target.value,
+      id: "userChildLayer",
+      objects: {}
+    });
+    return;
+  };
+  const [objectsBuffer, setObjectsBuffer] = useState(
+    workingWithChildLayer
       ? Object.assign({}, requiredChildLayer.objects)
-      : Object.assign({}, layer.objects);
+      : Object.assign({}, layer.objects)
+  );
 
-    //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
+  const collectObjects = event => {
+    let name = event.target.dataset.property;
     if (event.target.type === "checkbox") {
-      objectsBuffer[event.target.dataset.property] = event.target.checked;
-      // После отмены флажка fill все fill-свойства удаляются из объекта
-      if (objectsBuffer[event.target.dataset.property] === false) {
-        for (let prop in objectsBuffer) {
-          if (
-            prop === "fill" ||
-            prop === "fillColor" ||
-            prop === "fillOpacity" ||
-            prop === "fillRule"
-          )
-            delete objectsBuffer[prop];
-        }
-      }
-    } else if (event.target.type === "text") {
-      //Если не написали св-во оно удаляется (иначе будет пустое)
-      event.target.value === ""
-        ? delete objectsBuffer[event.target.dataset.property]
-        : (objectsBuffer[event.target.dataset.property] = event.target.value);
-    } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
-    //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
-    if ("" in objectsBuffer || "undefined" in objectsBuffer) {
-      delete objectsBuffer[""];
-      delete objectsBuffer["undefined"];
+      setObjectsBuffer({
+        ...objectsBuffer,
+        ...{ [name]: event.target.checked }
+      });
+    } else {
+      setObjectsBuffer({ ...objectsBuffer, ...{ [name]: event.target.value } });
     }
-    //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
+
     if (workingWithChildLayer) {
       setRequiredChildLayer(
         Object.assign(requiredChildLayer, { objects: objectsBuffer })
       );
     } else {
       onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
-      // console.log("from endOfSaveChanges --- ", layer);
     }
     setAreShowedOutputAreas(true);
-
-    // вызов ф-ии вывода готового абзаца в showObject
     showObj();
-    // console.log("конец saveChanges");
   };
+
+  // const saveChanges = event => {
+  //   //Отслеживаем нажатие ненужных кнопок
+  //   if (
+  //     event.target.dataset.name === "btnSend" ||
+  //     event.target.dataset.name === "createLayerRef" ||
+  //     event.target.dataset.name === "btnCancel" ||
+  //     event.target.dataset.name === "amountChildLayersHref" ||
+  //     event.target.dataset.name === "layerSel"
+  //   ) {
+  //     event.preventDefault();
+  //     return;
+  //   }
+
+  //   //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.objects
+  //   const objectsBuffer = workingWithChildLayer
+  //     ? Object.assign({}, requiredChildLayer.objects)
+  //     : Object.assign({}, layer.objects);
+
+  //   //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
+  //   if (event.target.type === "checkbox") {
+  //     objectsBuffer[event.target.dataset.property] = event.target.checked;
+  //     // После отмены флажка fill все fill-свойства удаляются из объекта
+  //     if (objectsBuffer[event.target.dataset.property] === false) {
+  //       for (let prop in objectsBuffer) {
+  //         if (
+  //           prop === "fill" ||
+  //           prop === "fillColor" ||
+  //           prop === "fillOpacity" ||
+  //           prop === "fillRule"
+  //         )
+  //           delete objectsBuffer[prop];
+  //       }
+  //     }
+  //   } else if (event.target.type === "text") {
+  //     //Если не написали св-во оно удаляется (иначе будет пустое)
+  //     event.target.value === ""
+  //       ? delete objectsBuffer[event.target.dataset.property]
+  //       : (objectsBuffer[event.target.dataset.property] = event.target.value);
+  //   } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
+  //   //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
+  //   if ("" in objectsBuffer || "undefined" in objectsBuffer) {
+  //     delete objectsBuffer[""];
+  //     delete objectsBuffer["undefined"];
+  //   }
+  //   //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
+  //   if (workingWithChildLayer) {
+  //     setRequiredChildLayer(
+  //       Object.assign(requiredChildLayer, { objects: objectsBuffer })
+  //     );
+  //   } else {
+  //     onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
+  //     // console.log("from endOfSaveChanges --- ", layer);
+  //   }
+  //   setAreShowedOutputAreas(true);
+
+  //   // вызов ф-ии вывода готового абзаца в showObject
+  //   showObj();
+  //   // console.log("конец saveChanges");
+  // };
 
   //Ф-ия вывода свойств набранного объекта справа в рамке
   const showObj = () => {
@@ -295,7 +309,7 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
   return (
     <div className="appDiv">
       <SetForm
-        saveChanges={saveChanges}
+        // saveChanges={saveChanges}
         btnSendClick={btnSendClick}
         showFillProperty={showFillProperty}
         setIsShowedProperties={setIsShowedProperties}
@@ -315,6 +329,11 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
         setShouldAddChildLayer={setShouldAddChildLayer}
         workingWithChildLayer={workingWithChildLayer}
         setWorkingWithChildLayer={setWorkingWithChildLayer}
+        handleLayerSelect={handleLayerSelect}
+        handleAddLayerInput={handleAddLayerInput}
+        handleChildLayerSelect={handleChildLayerSelect}
+        handleChildLayerInput={handleChildLayerInput}
+        collectObjects={collectObjects}
       />
 
       <div className="outputAreas">
@@ -340,3 +359,15 @@ export default connect(
     }
   })
 )(App);
+
+// //Проверка на пустое поле addChildLayerInput
+// if (
+//   addChildLayerInputValue === "" &&
+//   workingWithChildLayer &&
+//   shouldAddChildLayer
+// ) {
+//   setAddChildLayerInputStyle({ outline: "1px solid red" });
+//   return;
+// } else {
+//   setAddChildLayerInputStyle({ outline: "none" });
+// }

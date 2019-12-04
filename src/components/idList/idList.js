@@ -1,7 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 
-function IdList({ layersArr = [], showSetForm, isHiddenSelectLayer }) {
+function IdList({
+  layersArr = [],
+  showSetForm,
+  isHiddenSelectLayer,
+  handleLayerSelect
+}) {
   // console.log("from Idlist ", layersArr);
   const list = layersArr.map((item, index) => {
     return (
@@ -22,6 +27,7 @@ function IdList({ layersArr = [], showSetForm, isHiddenSelectLayer }) {
       data-name="layerSel"
       id="layerSel"
       onClick={showSetForm}
+      onChange={handleLayerSelect}
       hidden={isHiddenSelectLayer}
     >
       {list}

@@ -12,7 +12,9 @@ const ChildLayerProps = ({
   setShouldAddChildLayer,
   addChildLayerInputValue,
   setAddChildLayerInputValue,
-  addChildLayerInputStyle
+  addChildLayerInputStyle,
+  handleChildLayerSelect,
+  handleChildLayerInput
 }) => {
   const getAddChildLayerInput = event => {
     setAddChildLayerInputValue(event.target.value);
@@ -35,10 +37,13 @@ const ChildLayerProps = ({
             onClick={setIsCreatingChildLayer}
             hidden={!shouldAddChildLayer}
             value={addChildLayerInputValue}
-            onChange={getAddChildLayerInput}
+            onChange={handleChildLayerInput}
             style={addChildLayerInputStyle}
           />
-          <GetChildLayersList shouldAddChildLayer={shouldAddChildLayer} />
+          <GetChildLayersList
+            shouldAddChildLayer={shouldAddChildLayer}
+            handleChildLayerSelect={handleChildLayerSelect}
+          />
         </div>
         <div className="col-md-2">
           <button
