@@ -56,25 +56,41 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
     }
     //Отслеживание нажатия на селект выбора слоя
     if (event.target.dataset.name === "layerSel") {
-      try {
-        getRequredLayer();
+      // try {
+      //   getRequredLayer();
 
-        async function getRequredLayer() {
-          let response = await fetch(
-            `http://localhost:3000/layers/configs/${
-              event.target.options[event.target.value].dataset.id
-            }`
-          );
-          let requiredLayer = await response.json();
-          onUpdateLayer(requiredLayer);
-
+      //   async function getRequredLayer() {
+      //     let response = await fetch(
+      //       `http://localhost:3000/layers/configs/${
+      //         event.target.options[event.target.value].dataset.id
+      //       }`
+      //     );
+      //     let requiredLayer = await response.json();
+      //     onUpdateLayer(requiredLayer);
+      //     console.log("required--- ", requiredLayer);
+      //     if (Object.keys(layer).length === 0) alert("empty");
+      //     if (layer.childLayers === undefined) layer.childLayers = []; //Временно для отладки ошибки
+      //     showObj();
+      //     setAreShowedOutputAreas(true);
+      //     // console.log("from layerSel - layer---", layer);
+      //   }
+      // } catch (err) {
+      //   alert("Произошла ошибка: ", err);
+      // }
+      fetch(
+        `http://localhost:3000/layers/configs/${
+          event.target.options[event.target.value].dataset.id
+        }`
+      )
+        .then(response => response.json())
+        .then(requiredLayer => onUpdateLayer(requiredLayer))
+        .then(() => {
+          if (Object.keys(layer).length === 0) alert("empty");
+          // if (layer.childLayers === undefined) layer.childLayers = []; //Временно для отладки ошибки
           showObj();
           setAreShowedOutputAreas(true);
-          // console.log("from layerSel - layer---", layer);
-        }
-      } catch (err) {
-        alert("Произошла ошибка: ", err);
-      }
+        })
+        .catch(err => alert("Произошла ошибка: " + err));
       return;
     }
 

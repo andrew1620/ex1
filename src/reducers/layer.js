@@ -3,7 +3,10 @@ export default function(state = {}, action) {
     case "GET_LAYER":
       return action.payload;
     case "UPDATE_LAYER":
-      return Object.assign(state, action.payload);
+      // console.log("state--- ", state, "payload--- ", action.payload);
+      // return Object.assign({}, state, action.payload);
+      return Object.assign({}, state, action.payload);
+    // return { ...state, ...action.payload };
     default:
       return state;
   }

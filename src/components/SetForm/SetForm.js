@@ -80,7 +80,7 @@ function SetForm({
   // }
 
   return (
-    <form className="container" onBlur={saveChanges}>
+    <form className="container" onChange={saveChanges}>
       <label htmlFor="layerSel" className="col-form-label">
         Выберите слой или{" "}
         <a
