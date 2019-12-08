@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import SetForm from "../SetForm/SetForm";
 import ShowObject from "../ShowObject/ShowObject";
@@ -58,13 +58,16 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
         let requiredLayer = await response.json();
         onUpdateLayer(requiredLayer);
 
-        showObj();
+        // showObj();
         setAreShowedOutputAreas(true);
       }
     } catch (err) {
       alert("Произошла ошибка: ", err);
+    } finally {
+      showObj();
     }
   };
+
   const handleAddLayerInput = event => {
     setIsShowedProperties(true);
     onUpdateLayer({
@@ -101,30 +104,27 @@ function App({ onGetLayersArr, layer, onUpdateLayer }) {
     });
     return;
   };
-  const [objectsBuffer, setObjectsBuffer] = useState(
-    workingWithChildLayer
-      ? Object.assign({}, requiredChildLayer.objects)
-      : Object.assign({}, layer.objects)
-  );
 
   const collectObjects = event => {
+    const objectsBuffer = workingWithChildLayer
+      ? Object.assign({}, requiredChildLayer.objects)
+      : Object.assign({}, layer.objects);
+
     let name = event.target.dataset.property;
     if (event.target.type === "checkbox") {
-      setObjectsBuffer({
-        ...objectsBuffer,
-        ...{ [name]: event.target.checked }
-      });
+      objectsBuffer[name] = event.target.checked;
     } else {
-      setObjectsBuffer({ ...objectsBuffer, ...{ [name]: event.target.value } });
-    }
-
-    if (workingWithChildLayer) {
-      setRequiredChildLayer(
-        Object.assign(requiredChildLayer, { objects: objectsBuffer })
-      );
-    } else {
+      objectsBuffer[name] = event.target.value;
       onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
     }
+
+    // if (workingWithChildLayer) {
+    //   setRequiredChildLayer(
+    //     Object.assign(requiredChildLayer, { objects: objectsBuffer })
+    //   );
+    // } else {
+    //   onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
+    // }
     setAreShowedOutputAreas(true);
     showObj();
   };
