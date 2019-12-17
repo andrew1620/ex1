@@ -57,7 +57,6 @@ const rectangle = [
 
 const myMap = ({ layer }) => {
   const vectorLayer = getShape(layer);
-  console.log(vectorLayer);
   return (
     <Map center={position} zoom={13} className="map">
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" />

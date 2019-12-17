@@ -3,6 +3,7 @@ import IdList from "../idList/idList";
 import InitialLayerProps from "../InitialLayerProps/InitialLayerProps";
 import ChildLayerProps from "../ChildLayerProps/ChildLayerProps";
 import LayerSettings from "../LayerSettings/index";
+import GetInitialLayerForm from "../GetInitialLayerForm";
 import "./style.css";
 import { connect } from "react-redux";
 
@@ -84,6 +85,17 @@ function SetForm({
   //   }, 3000);
   // }
 
+  const obj = {
+    color: "red",
+    shape: "polugon",
+    weight: "normal",
+    opacity: "0",
+    lineCap: "round",
+    lineJoin: "round",
+    dashArray: "null",
+    dashOffset: "null"
+  };
+
   return (
     <form className="container">
       <label htmlFor="layerSel" className="col-form-label">
@@ -110,7 +122,7 @@ function SetForm({
           className="form-control"
           data-name="addLayerInput"
           placeholder="Введите название слоя"
-          style={{ maxWidth: "570px" }}
+          style={{ maxWidth: "80%" }}
           onChange={handleAddLayerInput}
         />
         <button
@@ -142,12 +154,7 @@ function SetForm({
           </div>
 
           <div className="props" onChange={collectObjects}>
-            {!workingWithChildLayer ? (
-              <InitialLayerProps
-                showFillProperty={showFillProperty}
-                btnSendClick={btnSendClick}
-              />
-            ) : (
+            {workingWithChildLayer && (
               <ChildLayerProps
                 showFillProperty={showFillProperty}
                 btnSaveChildLayer={btnSaveChildLayer}
@@ -160,7 +167,15 @@ function SetForm({
                 handleChildLayerInput={handleChildLayerInput}
               />
             )}
+            <GetInitialLayerForm objects={obj} />
           </div>
+          <button
+            className="btn btn-primary"
+            data-name="btnSend"
+            onClick={btnSendClick}
+          >
+            Отправить
+          </button>
         </div>
       )}
     </form>

@@ -10,6 +10,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  /* display: grid;
+  grid-template-rows: 1fr 1fr; */
 }
 .btnChildLayer,
 .btnInitialLayer {

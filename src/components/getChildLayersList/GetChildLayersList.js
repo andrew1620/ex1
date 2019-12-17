@@ -3,24 +3,25 @@ import { connect } from "react-redux";
 
 /*shouldAddChildLayer,*/
 function GetChildLayersList({
-  layer = { childLayers: [] },
   shouldAddChildLayer,
-  handleChildLayerSelect
+  handleChildLayerSelect,
+  childLayersArr
 }) {
   const childLayersList =
-    layer.childLayers !== undefined && // В самом начале layer.childLayers == undefined, для этоого эта проверка
-    layer.childLayers.map((item, index) => {
+    childLayersArr.length > 0 &&
+    childLayersArr.map((childLayer, index) => {
       return (
-        <option
-          key={item.id}
-          data-index={index}
-          value={index}
-          data-id={item.id}
-        >
-          {item.name}
+        <option key={childLayer.id} value={index}>
+          {childLayer.name}
         </option>
       );
     });
+
+  const show = event => {
+    event.preventDefault();
+    console.log(childLayersArr);
+  };
+
   return (
     <div className="childLayersSelectContainer">
       <select
@@ -32,13 +33,11 @@ function GetChildLayersList({
       >
         {childLayersList}
       </select>
+      <button onClick={show}>show getChildLayersList</button>
     </div>
   );
 }
 
-export default connect(
-  state => ({
-    layer: state.layer
-  }),
-  dispatch => ({})
-)(GetChildLayersList);
+export default connect(state => ({
+  childLayersArr: state.childLayersArr
+}))(GetChildLayersList);
