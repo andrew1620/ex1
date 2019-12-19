@@ -17,11 +17,6 @@ function GetChildLayersList({
       );
     });
 
-  const show = event => {
-    event.preventDefault();
-    console.log(childLayersArr);
-  };
-
   return (
     <div className="childLayersSelectContainer">
       <select
@@ -33,7 +28,6 @@ function GetChildLayersList({
       >
         {childLayersList}
       </select>
-      <button onClick={show}>show getChildLayersList</button>
     </div>
   );
 }

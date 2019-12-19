@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import IdList from "../idList/idList";
-import InitialLayerProps from "../InitialLayerProps/InitialLayerProps";
 import ChildLayerProps from "../ChildLayerProps/ChildLayerProps";
 import LayerSettings from "../LayerSettings/index";
-import GetInitialLayerForm from "../GetInitialLayerForm";
+import GetMainForm from "../GetMainForm";
 import "./style.css";
 import { connect } from "react-redux";
 
 function SetForm({
   layer = [],
-  saveChanges,
   btnSendClick,
-  showFillProperty,
   isShowedProperties,
   setIsShowedProperties,
   setAreShowedOutputAreas,
@@ -20,10 +17,6 @@ function SetForm({
   setIsHiddenAddLayerContainer,
   setIsHiddenSelectLayer,
   creatingChildLayer,
-  btnSaveChildLayer,
-  addChildLayerInputValue,
-  setAddChildLayerInputValue,
-  addChildLayerInputStyle,
   shouldAddChildLayer,
   setShouldAddChildLayer,
   workingWithChildLayer,
@@ -37,16 +30,14 @@ function SetForm({
   const showSetForm = () => {
     setIsShowedProperties(true);
     //эта херь для обновления кол-ва слоев на кнопке child layers (), пока не придумал как иначе обновить
-
-    setIsShowedProperties(false);
-    setIsShowedProperties(true);
+    // setIsShowedProperties(false);
+    // setIsShowedProperties(true);
   };
 
   const pressCreateLayer = () => {
     setIsHiddenAddLayerContainer(false);
     setIsHiddenSelectLayer(true);
     setAreShowedOutputAreas(false);
-    setIsShowedProperties(false);
     setIsShowedProperties(false);
   };
   const cancelAddLayer = () => {
@@ -71,29 +62,18 @@ function SetForm({
       .classList.remove("active");
     setShouldAddChildLayer(layer.childLayers.length === 0 ? true : false);
   };
-  // const [whosePropsPosition, setWhosePropsPosition] = useState({});
-  // if (isShowedProperties) {
-  //   setTimeout(() => {
-  //     const propsCoords = document
-  //       .querySelector(".props")
-  //       .getBoundingClientRect();
-  //     setWhosePropsPosition({
-  //       top:
-  //         propsCoords.top - document.querySelector(".whoseProps").offsetHeight,
-  //       width: document.querySelector(".props").offsetWidth
-  //     });
-  //   }, 3000);
-  // }
 
   const obj = {
     color: "red",
-    shape: "polugon",
+    shape: "polygon",
     weight: "normal",
     opacity: "0",
     lineCap: "round",
     lineJoin: "round",
     dashArray: "null",
-    dashOffset: "null"
+    dashOffset: "null",
+    fillRule: "circle",
+    fillOpacity: "0"
   };
 
   return (
@@ -137,11 +117,7 @@ function SetForm({
       {isShowedProperties && (
         <div className="underSelectLayer">
           <LayerSettings />
-          <div
-            className="whoseProps"
-            onMouseDown={creatingChildLayer}
-            // style={whosePropsPosition}
-          >
+          <div className="whoseProps" onMouseDown={creatingChildLayer}>
             <div
               className="btnInitialLayer active"
               onClick={chooseInitialLayer}
@@ -156,18 +132,16 @@ function SetForm({
           <div className="props" onChange={collectObjects}>
             {workingWithChildLayer && (
               <ChildLayerProps
-                showFillProperty={showFillProperty}
-                btnSaveChildLayer={btnSaveChildLayer}
                 shouldAddChildLayer={shouldAddChildLayer}
                 setShouldAddChildLayer={setShouldAddChildLayer}
-                addChildLayerInputValue={addChildLayerInputValue}
-                setAddChildLayerInputValue={setAddChildLayerInputValue}
-                addChildLayerInputStyle={addChildLayerInputStyle}
                 handleChildLayerSelect={handleChildLayerSelect}
                 handleChildLayerInput={handleChildLayerInput}
               />
             )}
-            <GetInitialLayerForm objects={obj} />
+            <GetMainForm
+              objects={obj}
+              workingWithChildLayer={workingWithChildLayer}
+            />
           </div>
           <button
             className="btn btn-primary"

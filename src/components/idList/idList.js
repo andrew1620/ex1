@@ -7,7 +7,6 @@ function IdList({
   isHiddenSelectLayer,
   handleLayerSelect
 }) {
-  // console.log("from Idlist ", layersArr);
   const list = layersArr.map((item, index) => {
     return (
       <option
@@ -34,9 +33,6 @@ function IdList({
     </select>
   );
 }
-export default connect(
-  state => ({
-    layersArr: state.layers
-  }),
-  dispath => ({})
-)(IdList);
+export default connect(state => ({
+  layersArr: state.layers
+}))(IdList);

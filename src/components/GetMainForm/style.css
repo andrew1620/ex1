@@ -1,9 +1,9 @@
-.initialLayerProperties {
+.mainForm {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 @media screen and (max-width: 820px) {
-  .initialLayerProperties {
+  .mainForm {
     grid-template-columns: 1fr;
   }
 }

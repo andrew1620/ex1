@@ -30,24 +30,13 @@ function App({
   const [isShowedProperties, setIsShowedProperties] = useState(false);
   const [areShowedOutputAreas, setAreShowedOutputAreas] = useState(false);
   const [workingWithChildLayer, setWorkingWithChildLayer] = useState(false);
-  const [requiredChildLayer, setRequiredChildLayer] = useState({});
-  const [addChildLayerInputValue, setAddChildLayerInputValue] = useState("");
-  const [addChildLayerInputStyle, setAddChildLayerInputStyle] = useState({});
   const [shouldAddChildLayer, setShouldAddChildLayer] = useState(false);
 
   const creatingChildLayer = event => {
     if (event.target.classList.contains("btnInitialLayer")) {
       setWorkingWithChildLayer(false);
-      // console.log(
-      //   "from creating Layer---workingwith childLayer: ",
-      //   workingWithChildLayer
-      // );
     } else if (event.target.classList.contains("btnChildLayer")) {
       setWorkingWithChildLayer(true);
-      // console.log(
-      //   "from creating Layer---workingwith childLayer: ",
-      //   workingWithChildLayer
-      // );
     }
     return;
   };
@@ -143,102 +132,6 @@ function App({
     setAreShowedOutputAreas(true);
   };
 
-  // const saveChanges = event => {
-  //   //Отслеживаем нажатие ненужных кнопок
-  //   if (
-  //     event.target.dataset.name === "btnSend" ||
-  //     event.target.dataset.name === "createLayerRef" ||
-  //     event.target.dataset.name === "btnCancel" ||
-  //     event.target.dataset.name === "amountChildLayersHref" ||
-  //     event.target.dataset.name === "layerSel"
-  //   ) {
-  //     event.preventDefault();
-  //     return;
-  //   }
-
-  //   //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.objects
-  //   const objectsBuffer = workingWithChildLayer
-  //     ? Object.assign({}, requiredChildLayer.objects)
-  //     : Object.assign({}, layer.objects);
-
-  //   //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
-  //   if (event.target.type === "checkbox") {
-  //     objectsBuffer[event.target.dataset.property] = event.target.checked;
-  //     // После отмены флажка fill все fill-свойства удаляются из объекта
-  //     if (objectsBuffer[event.target.dataset.property] === false) {
-  //       for (let prop in objectsBuffer) {
-  //         if (
-  //           prop === "fill" ||
-  //           prop === "fillColor" ||
-  //           prop === "fillOpacity" ||
-  //           prop === "fillRule"
-  //         )
-  //           delete objectsBuffer[prop];
-  //       }
-  //     }
-  //   } else if (event.target.type === "text") {
-  //     //Если не написали св-во оно удаляется (иначе будет пустое)
-  //     event.target.value === ""
-  //       ? delete objectsBuffer[event.target.dataset.property]
-  //       : (objectsBuffer[event.target.dataset.property] = event.target.value);
-  //   } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
-  //   //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
-  //   if ("" in objectsBuffer || "undefined" in objectsBuffer) {
-  //     delete objectsBuffer[""];
-  //     delete objectsBuffer["undefined"];
-  //   }
-  //   //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
-  //   if (workingWithChildLayer) {
-  //     setRequiredChildLayer(
-  //       Object.assign(requiredChildLayer, { objects: objectsBuffer })
-  //     );
-  //   } else {
-  //     onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
-  //     // console.log("from endOfSaveChanges --- ", layer);
-  //   }
-  //   setAreShowedOutputAreas(true);
-
-  //   // вызов ф-ии вывода готового абзаца в showObject
-  //   showObj();
-  //   // console.log("конец saveChanges");
-  // };
-
-  //Ф-ия вывода свойств набранного объекта справа в рамке
-
-  const btnSaveChildLayer = event => {
-    if (event.target.tagName === "BUTTON") event.preventDefault();
-
-    //Проверка на пустой childLayer
-    if (Object.keys(requiredChildLayer.objects).length === 0) return;
-    checkSameChildLayer();
-    onUpdateLayer(
-      Object.assign(layer, {
-        childLayers: [...layer.childLayers, requiredChildLayer]
-      })
-    );
-    setWorkingWithChildLayer(false);
-    document.querySelector(".btnChildLayer").classList.remove("active");
-    document.querySelector(".btnInitialLayer").classList.add("active");
-
-    //ф-ия проверки одинаковых childLayers
-    function checkSameChildLayer() {
-      const childLayersArr = layer.childLayers;
-      let index = "initial";
-      for (let i = 0; i < childLayersArr.length; i++) {
-        if (childLayersArr[i].name === requiredChildLayer.name) {
-          index = i;
-          break;
-        }
-      }
-      if (index !== "initial") {
-        childLayersArr.splice(index, 1);
-        onUpdateLayer(Object.assign(layer, { childLayers: childLayersArr }));
-      } else return;
-    }
-
-    // console.log("from btnSaveChildLayer - layer--- ", layer);
-  };
-
   const [isHiddenAddLayerContainer, setIsHiddenAddLayerContainer] = useState(
     true
   );
@@ -291,20 +184,10 @@ function App({
     }
   }
 
-  const showFillProperty = event => {
-    //Открытие доп. свойств при нажатии на fill
-    if (event.target.tagName === "INPUT") {
-      event.target.parentElement.parentElement.nextElementSibling.hidden = !event
-        .target.parentElement.parentElement.nextElementSibling.hidden;
-    }
-  };
-
   return (
     <div className="appDiv">
       <SetForm
-        // saveChanges={saveChanges}
         btnSendClick={btnSendClick}
-        showFillProperty={showFillProperty}
         setIsShowedProperties={setIsShowedProperties}
         isShowedProperties={isShowedProperties}
         areShowedOutputAreas={areShowedOutputAreas}
@@ -314,10 +197,6 @@ function App({
         setIsHiddenAddLayerContainer={setIsHiddenAddLayerContainer}
         setIsHiddenSelectLayer={setIsHiddenSelectLayer}
         creatingChildLayer={creatingChildLayer}
-        btnSaveChildLayer={btnSaveChildLayer}
-        addChildLayerInputValue={addChildLayerInputValue}
-        setAddChildLayerInputValue={setAddChildLayerInputValue}
-        addChildLayerInputStyle={addChildLayerInputStyle}
         shouldAddChildLayer={shouldAddChildLayer}
         setShouldAddChildLayer={setShouldAddChildLayer}
         workingWithChildLayer={workingWithChildLayer}
@@ -378,3 +257,63 @@ export default connect(
 // } else {
 //   setAddChildLayerInputStyle({ outline: "none" });
 // }
+
+// const saveChanges = event => {
+//   //Отслеживаем нажатие ненужных кнопок
+//   if (
+//     event.target.dataset.name === "btnSend" ||
+//     event.target.dataset.name === "createLayerRef" ||
+//     event.target.dataset.name === "btnCancel" ||
+//     event.target.dataset.name === "amountChildLayersHref" ||
+//     event.target.dataset.name === "layerSel"
+//   ) {
+//     event.preventDefault();
+//     return;
+//   }
+
+//   //Создаем времен. перемнную св-в, для сохранения старых значений и доброски новых в layer.objects
+//   const objectsBuffer = workingWithChildLayer
+//     ? Object.assign({}, requiredChildLayer.objects)
+//     : Object.assign({}, layer.objects);
+
+//   //Отслеживаем нажатие на чекбокс, нужно для установки true/false вместо on/''
+//   if (event.target.type === "checkbox") {
+//     objectsBuffer[event.target.dataset.property] = event.target.checked;
+//     // После отмены флажка fill все fill-свойства удаляются из объекта
+//     if (objectsBuffer[event.target.dataset.property] === false) {
+//       for (let prop in objectsBuffer) {
+//         if (
+//           prop === "fill" ||
+//           prop === "fillColor" ||
+//           prop === "fillOpacity" ||
+//           prop === "fillRule"
+//         )
+//           delete objectsBuffer[prop];
+//       }
+//     }
+//   } else if (event.target.type === "text") {
+//     //Если не написали св-во оно удаляется (иначе будет пустое)
+//     event.target.value === ""
+//       ? delete objectsBuffer[event.target.dataset.property]
+//       : (objectsBuffer[event.target.dataset.property] = event.target.value);
+//   } else objectsBuffer[event.target.dataset.property] = event.target.value; //Докидываем новые св-ва во временную перемн. стилей
+//   //после выбора слоя (только после выбора слоя, если не выбирать, такое св-во не появляется) в стилях появляется св-во с пустым ключом, эта строка удаляет пустой ключ из style
+//   if ("" in objectsBuffer || "undefined" in objectsBuffer) {
+//     delete objectsBuffer[""];
+//     delete objectsBuffer["undefined"];
+//   }
+//   //В layer забрасывается св-ва из второго аргумента (объекта), а там у ключа style значение - объект с новыми и старыми стилями
+//   if (workingWithChildLayer) {
+//     setRequiredChildLayer(
+//       Object.assign(requiredChildLayer, { objects: objectsBuffer })
+//     );
+//   } else {
+//     onUpdateLayer(Object.assign(layer, { objects: objectsBuffer }));
+//     // console.log("from endOfSaveChanges --- ", layer);
+//   }
+//   setAreShowedOutputAreas(true);
+
+//   // вызов ф-ии вывода готового абзаца в showObject
+//   showObj();
+//   // console.log("конец saveChanges");
+// };
