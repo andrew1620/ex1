@@ -5,9 +5,10 @@ function IdList({
   layersArr = [],
   showSetForm,
   isHiddenSelectLayer,
-  handleLayerSelect
+  handleLayerSelect,
+  newLayer
 }) {
-  const list = layersArr.map((item, index) => {
+  const list = newLayer.objects.types.map((item, index) => {
     return (
       <option
         key={item.id ? item.id : index * Math.random() * 10}
@@ -16,7 +17,7 @@ function IdList({
       >
         {" "}
         {/*надо допилить, в индекс как ключ не пойдет*/}
-        {item.name}
+        {item.id}
       </option>
     );
   });
@@ -34,5 +35,6 @@ function IdList({
   );
 }
 export default connect(state => ({
-  layersArr: state.layers
+  layersArr: state.layers,
+  newLayer: state.newLayer
 }))(IdList);

@@ -1,41 +1,4 @@
-import React from "react";
-import "./style.css";
-import { connect } from "react-redux";
-
-const LayerSettings = ({ newLayer, onUpdateNewLayer }) => {
-  const handleCheckbox = event => {
-    if (event.target.checked) {
-      newLayerBuf.services[1].service = "realtime";
-      newLayerBuf.services[1].options = { dalay: 500 };
-    } else {
-      newLayerBuf.services[1].service = "static";
-      newLayerBuf.services[1].options = {};
-    }
-    onUpdateNewLayer(newLayerBuf);
-  };
-  return (
-    <div className="layerSettingsContainer">
-      <label>
-        {" "}
-        Динамическая загрузка данных{" "}
-        <input type="checkbox" onChange={handleCheckbox} />
-      </label>
-    </div>
-  );
-};
-
-export default connect(
-  state => ({
-    newLayer: state.newLayer
-  }),
-  dispatch => ({
-    onUpdateNewLayer(newLayer) {
-      dispatch({ type: "UPDATE-NEWLAYER", payload: newLayer });
-    }
-  })
-)(LayerSettings);
-
-const newLayerBuf = {
+const newLayer = {
   id: "unmanned_aerial_vehicle",
   childLayers: [],
   services: [
@@ -101,3 +64,14 @@ const newLayerBuf = {
     ]
   }
 };
+
+export default function(state = newLayer, action) {
+  switch (action.type) {
+    case "GET_NEWLAYER":
+      return action.payload;
+    case "UPDATE_NEWLAYER":
+      return Object.assign({}, state, action.payload);
+    default:
+      return state;
+  }
+}

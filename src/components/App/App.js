@@ -15,7 +15,8 @@ function App({
   onClearChildLayer,
   childLayersArr,
   onUpdateChildLayersArr,
-  onClearChildLayersArr
+  onClearChildLayersArr,
+  newLayer
 }) {
   const [isFetchCalled, setIsFetchCalled] = useState(false); // Состояние уже загруженных слоев, если нет то загрузить если да то не надо, инче появлялся постоянный рендер слоев
   const url = "http://localhost:3000/layers";
@@ -23,7 +24,7 @@ function App({
     fetch(url)
       .then(response => response.json())
       .then(layersArr => onGetLayersArr(layersArr))
-      .catch(err => alert("Ошибка загрузки слоев " + err));
+      .catch(err => console.log("Ошибка загрузки слоев ", err));
     setIsFetchCalled(true); // ф-ия остановки постоянного запроса данных
   }
 
@@ -40,19 +41,21 @@ function App({
     }
     return;
   };
-
   const handleLayerSelect = event => {
     try {
       //Загрузка основного слоя
       getRequredLayer();
       async function getRequredLayer() {
-        let response = await fetch(
-          `http://localhost:3000/layers/configs/${
-            event.target.options[event.target.value].dataset.id
-          }`
-        );
-        let requiredLayer = await response.json();
-        onUpdateLayer(requiredLayer);
+        // let response = await fetch(
+        //   `http://localhost:3000/layers/configs/${
+        //     event.target.options[event.target.value].dataset.id
+        //   }`
+        // );
+        // let requiredLayer = await response.json();
+        let requiredLayer = { childLayers: [] };
+        const buf = newLayer.objects.types[2].format;
+        // onUpdateLayer(requiredLayer);
+        onUpdateLayer(buf);
 
         //Загрузка childLayers из основного слоя
         onClearChildLayersArr();
@@ -66,6 +69,7 @@ function App({
       alert("Произошла ошибка: ", err);
     }
   };
+  console.log(layer);
   function downloadChildLayer(id) {
     fetch(`http://localhost:3000/layers/configs/${id}`)
       .then(response => response.json())
@@ -125,9 +129,7 @@ function App({
         })
       );
     } else {
-      onUpdateLayer(
-        Object.assign(layer, { objects: { ...layer.objects, ...buffer } })
-      );
+      onUpdateLayer(Object.assign(layer, { ...buffer }));
     }
     setAreShowedOutputAreas(true);
   };
@@ -222,7 +224,8 @@ export default connect(
     layer: state.layer,
     childLayersBuffer1: state.childLayersBuffer,
     childLayer: state.childLayer,
-    childLayersArr: state.childLayersArr
+    childLayersArr: state.childLayersArr,
+    newLayer: state.newLayer
   }),
   dispatch => ({
     onGetLayersArr(layersArr) {

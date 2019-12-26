@@ -2,11 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import "./style.css";
 
-function ShowObject({ layer, childLayer, childLayersArr }) {
+function ShowObject({ layer, childLayer, childLayersArr, newLayer }) {
   // console.log("showObject --- ", childLayersArr);
   let strObjects = "";
-  for (let key in layer.objects) {
-    strObjects += ` ${key}: ${layer.objects[key]}, `;
+  for (let key in layer) {
+    strObjects += ` ${key}: ${layer[key]}, `;
   }
 
   const pList = childLayersArr.map(item => {
@@ -16,8 +16,8 @@ function ShowObject({ layer, childLayer, childLayersArr }) {
     }
     return (
       <p key={Date().now}>
-        <b>name:</b> {item.name}
-        <br /> <b>id:</b> {item.id}
+        <b>name:</b> {"name"}
+        <br /> <b>id:</b> {newLayer.objects.types[2].id}
         <br /> <b>objects:</b> {strChildObjects}
       </p>
     );
@@ -40,7 +40,7 @@ function ShowObject({ layer, childLayer, childLayersArr }) {
         <hr style={{ margin: 0 }} />
         <b>name:</b> {layer.name}
         <br />
-        <b>id:</b> {layer.id || "no Id"}
+        <b>id:</b> {newLayer.objects.types[2].id || "no Id"}
         <br />
         <b>objects:</b> {strObjects}
         {layer.childLayers.length !== 0 && (
@@ -72,5 +72,6 @@ function ShowObject({ layer, childLayer, childLayersArr }) {
 export default connect(state => ({
   layer: state.layer,
   childLayer: state.childLayer,
-  childLayersArr: state.childLayersArr
+  childLayersArr: state.childLayersArr,
+  newLayer: state.newLayer
 }))(ShowObject);

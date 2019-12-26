@@ -56,7 +56,24 @@ const rectangle = [
 ];
 
 const myMap = ({ layer }) => {
-  const vectorLayer = getShape(layer);
+  // const vectorLayer = getShape(layer);
+  const vectorLayer = (
+    <Circle
+      center={position}
+      color={layer.color}
+      // weight={layer.objects.weight}
+      opacity={layer.opacity}
+      // fill={layer.object.fill}
+      fillColor={layer.fillColor}
+      fillOpacity={layer.fillOpacity}
+      fillRule={layer.fillRule}
+      // lineCap={layer.object.lineCap}
+      // lineJoin={layer.object.lineJoin}
+      // dashArray={layer.object.dashArray}
+      // dashOffset={layer.object.dashOffset}
+      radius={200}
+    />
+  );
   return (
     <Map center={position} zoom={13} className="map">
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" />
@@ -73,7 +90,8 @@ const myMap = ({ layer }) => {
   );
 };
 export default connect(state => ({
-  layer: state.layer
+  layer: state.layer,
+  newLayer: state.newLayer
 }))(myMap);
 
 const getShape = layer => {

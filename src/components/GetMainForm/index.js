@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 const GetMainForm = ({ objects, workingWithChildLayer, layer, childLayer }) => {
   const formElemsArr = [];
+  //сейчас подключен искусственный объект layer для загрузки всех селектов, для загрузки по пропертям layer необходимо заменить objects на layer.objects в цикле ниже
   for (let prop in objects) {
     formElemsArr.push(getElems(prop));
   }
