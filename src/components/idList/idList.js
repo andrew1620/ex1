@@ -9,6 +9,8 @@ function IdList({
   newLayer
 }) {
   const list = newLayer.objects.types.map((item, index) => {
+  // console.log("from Idlist ", layersArr);
+  const list = layersArr.map((item, index) => {
     return (
       <option
         key={item.id ? item.id : index * Math.random() * 10}
@@ -34,7 +36,16 @@ function IdList({
     </select>
   );
 }
+<<<<<<< HEAD
 export default connect(state => ({
   layersArr: state.layers,
   newLayer: state.newLayer
 }))(IdList);
+=======
+export default connect(
+  state => ({
+    layersArr: state.layers
+  }),
+  dispath => ({})
+)(IdList);
+>>>>>>> parent of 0a2eff2... repaired all the app

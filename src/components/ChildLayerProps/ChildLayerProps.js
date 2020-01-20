@@ -1,14 +1,24 @@
 import React from "react";
 import GetChildLayersList from "../getChildLayersList/GetChildLayersList";
 import "./style.css";
+import { connect } from "react-redux";
 
 const ChildLayerProps = ({
+  layer = {},
   setIsCreatingChildLayer,
+  showFillProperty,
+  btnSaveChildLayer,
   shouldAddChildLayer,
   setShouldAddChildLayer,
+  addChildLayerInputValue,
+  setAddChildLayerInputValue,
+  addChildLayerInputStyle,
   handleChildLayerSelect,
   handleChildLayerInput
 }) => {
+  const getAddChildLayerInput = event => {
+    setAddChildLayerInputValue(event.target.value);
+  };
   const childLayerBtn = event => {
     event.preventDefault();
     setShouldAddChildLayer(!shouldAddChildLayer);
@@ -21,12 +31,13 @@ const ChildLayerProps = ({
           <input
             type="text"
             id="addChildLayerInput"
-            className="form-control"
+            className="form-control addChildLayerInput"
             data-name="addChildLayerInput"
             placeholder="Введите название child layer"
             onClick={setIsCreatingChildLayer}
             hidden={!shouldAddChildLayer}
             onChange={handleChildLayerInput}
+            style={addChildLayerInputStyle}
           />
           <GetChildLayersList
             shouldAddChildLayer={shouldAddChildLayer}
@@ -47,4 +58,9 @@ const ChildLayerProps = ({
   );
 };
 
-export default ChildLayerProps;
+export default connect(
+  state => ({
+    layer: state.layer
+  }),
+  dispatch => ({})
+)(ChildLayerProps);

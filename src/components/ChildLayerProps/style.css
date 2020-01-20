@@ -1,13 +1,8 @@
+.childLayerProperties,
 .initialLayerProperties {
-  border: 1px solid #eee;
+  border: 1px solid /*#2d8cff; */ #eee;
   border-radius: 1px 1px 3px 3px;
   padding: 20px 10px 10px 10px;
-  box-sizing: border-box;
-}
-.childLayerProperties {
-  border: 1px solid #eee;
-  border-bottom: 1px solid transparent;
-  padding: 20px 10px 0px 10px;
   box-sizing: border-box;
 }
 .tooltipLayer {
